@@ -1,6 +1,11 @@
 # 2048-game
 
-> My badass Nuxt.js project
+TODO:
+
+generate new random cards
+calculate movement distances
+action movements
+
 
 ## Build Setup
 

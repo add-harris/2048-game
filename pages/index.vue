@@ -8,38 +8,50 @@
 
         <v-card-title class="headline">Slide</v-card-title>
 
-        <v-card-text>
+        <div id="grey-container">
 
-          <v-container class="grey">
-
-            <v-row no-gutters>
+          <v-card-text>
 
 
               <div class="grid-box" id="grid-background">
-                <v-card class="lighten-2 sliding-card"></v-card>
-                <v-card class="lighten-2 sliding-card"></v-card>
+<!--                <v-card class="lighten-2 sliding-card"></v-card>-->
               </div>
 
-            </v-row>
 
-          </v-container>
+          </v-card-text>
+        </div>
 
-        </v-card-text>
-
-        <v-card-actions>
-
-          <v-spacer />
+          <v-card-actions>
 
           <!-- example nuxt link -->
           <!-- <v-btn color="primary" nuxt to="/inspire">Continue</v-btn>-->
 
-          <v-btn color="primary" @click="slideLeft()">Slide Left</v-btn>
-          <v-btn color="primary" @click="slideUp()">Slide Up</v-btn>
-          <v-btn color="primary" @click="slideRight()">Slide Right</v-btn>
-          <v-btn color="primary" @click="slideDown()">Slide Down</v-btn>
-          <v-btn color="primary" @click="printGrid()">print</v-btn>
 
-        </v-card-actions>
+
+            <v-container>
+              <v-row>
+                <div style="margin: 10px">
+
+                  <v-btn color="primary" @click="slideLeft()">Slide Left</v-btn>
+                  <v-btn color="primary" @click="slideUp()">Slide Up</v-btn>
+                  <v-btn color="primary" @click="slideRight()">Slide Right</v-btn>
+                  <v-btn color="primary" @click="slideDown()">Slide Down</v-btn>
+
+
+                </div>
+              </v-row>
+              <v-row>
+                <div style="margin: 10px">
+
+                  <v-btn color="primary" @click="printGrid()">print</v-btn>
+                  <v-btn color="primary" @click="createElement()">create</v-btn>
+
+                </div>
+              </v-row>
+            </v-container>
+
+          </v-card-actions>
+
 
       </v-card>
 
@@ -53,31 +65,63 @@
 
 
   // import { Grid, Position } from '../utils/Grid'
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapState} from 'vuex'
+  import _ from 'lodash'
+
 
   export default {
 
     data() {
       return {
-        // grid: new Grid()
+        count: 0
       }
     },
 
+    computed: mapState({
+      grid: state => state.grid
+    }),
+
     methods: {
       ...mapGetters({
-        getFirstRow: 'grid/getFirstRow'
+        getFirstRow: 'grid/getFirstRow',
+        getSecondRow: 'grid/getSecondRow',
+        getThirdRow: 'grid/getThirdRow',
+        getForthRow: 'grid/getForthRow',
+        getAll: 'grid/getAll'
       }),
       printGrid() {
-        console.log(this.$store.state.grid.text)
-        console.log(this.$store.getters['grid/getFirstRow'])
-        console.log(this.getFirstRow())
+        console.log()
+      },
+      getAllEmpty() {
+        return this.getAll().filter(position => position.isEmpty === true)
+      },
+      getRandomEmpty() {
+        return _.sample(this.getAllEmpty())
+      },
+      createElement() {
+
+        var element = document.getElementById("grid-background")
+        var card = document.createElement("DIV")
+        card.classList.add(
+          "lighten-2",
+          "sliding-card",
+          "v-card",
+          "v-sheet"
+        )
+        let emptyPosition = this.getRandomEmpty()
+        // let emptyPosition = this.getAllEmpty()[this.count]
+        console.log(emptyPosition.top)
+        console.log(emptyPosition.left)
+        card.style.top = emptyPosition.top + "px"
+        card.style.left = emptyPosition.left + "px"
+        element.appendChild(card)
+        this.count++
       },
       slideLeft() {
         let slidingCards = document.getElementsByClassName("sliding-card");
         for (let card of slidingCards) {
           card.style.left = Math.max( 0, parseFloat(getComputedStyle(card).left) - 300 ) + 'px'
         }
-        return 2
       },
       slideRight() {
         let slidingCards = document.getElementsByClassName("sliding-card");
@@ -113,8 +157,18 @@
     background-color: whitesmoke !important;
   }
 
+  #grey-container {
+    margin: 10px;
+    padding: 10px;
+    height: 450px;
+    width: 450px;
+    background-color: lightgrey;
+  }
+
   #grid-background {
-    /*position: fixed;*/
+    position: absolute;
+    height: 400px !important;
+    width: 400px;
     background-repeat: repeat;
     background-size: 100px 100px;
     background-image:
@@ -123,7 +177,7 @@
   }
 
   .sliding-card {
-    position: relative;
+    position: absolute;
     height: 90px;
     width: 90px;
     margin: 5px;
@@ -131,11 +185,6 @@
     top: 0px;
     background-color: lightgrey !important;
     transition: all 700ms;
-  }
-
-  @keyframes slide {
-    from {left: 0px;}
-    to {left: 228px;}
   }
 
 
