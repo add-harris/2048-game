@@ -2,9 +2,22 @@
 
 TODO:
 
-generate new random cards
+generate new random cards - x
 calculate movement distances
 action movements
+update state of grid
+
+calculate merges
+action merges
+
+show tile number values
+show tile colors
+randomly generate appropriate tile value
+
+animate tile generation 
+animate tile collapse
+
+win/loose scenarios 
 
 
 ## Build Setup

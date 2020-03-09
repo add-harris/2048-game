@@ -64,8 +64,8 @@
 <script>
 
 
-  // import { Grid, Position } from '../utils/Grid'
-  import { mapGetters, mapState} from 'vuex'
+  import { Position } from '../utils/Position'
+  import { mapState, mapGetters, mapMutations} from 'vuex'
   import _ from 'lodash'
 
 
@@ -89,8 +89,11 @@
         getForthRow: 'grid/getForthRow',
         getAll: 'grid/getAll'
       }),
+      ...mapMutations({
+        setPositionIsEmpty: 'grid/setPositionIsEmpty'
+      }),
       printGrid() {
-        console.log()
+        console.log(_.sample([]))
       },
       getAllEmpty() {
         return this.getAll().filter(position => position.isEmpty === true)
@@ -100,22 +103,25 @@
       },
       createElement() {
 
-        var element = document.getElementById("grid-background")
-        var card = document.createElement("DIV")
-        card.classList.add(
-          "lighten-2",
-          "sliding-card",
-          "v-card",
-          "v-sheet"
-        )
         let emptyPosition = this.getRandomEmpty()
-        // let emptyPosition = this.getAllEmpty()[this.count]
-        console.log(emptyPosition.top)
-        console.log(emptyPosition.left)
-        card.style.top = emptyPosition.top + "px"
-        card.style.left = emptyPosition.left + "px"
-        element.appendChild(card)
-        this.count++
+
+        if(emptyPosition) {
+
+          var element = document.getElementById("grid-background")
+          var card = document.createElement("DIV")
+          card.classList.add(
+            "lighten-2",
+            "sliding-card",
+            "v-card",
+            "v-sheet"
+          )
+
+          card.style.top = emptyPosition.top + "px"
+          card.style.left = emptyPosition.left + "px"
+          element.appendChild(card)
+          this.count++
+          this.setPositionIsEmpty(emptyPosition.name, false)
+        }
       },
       slideLeft() {
         let slidingCards = document.getElementsByClassName("sliding-card");
