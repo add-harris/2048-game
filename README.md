@@ -10,6 +10,8 @@ update state of grid
 calculate merges
 action merges
 
+split tile out to component
+
 show tile number values
 show tile colors
 randomly generate appropriate tile value

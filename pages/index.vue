@@ -93,13 +93,13 @@
         setPositionIsEmpty: 'grid/setPositionIsEmpty'
       }),
       printGrid() {
-        console.log(_.sample([]))
+        console.log(this.calculateMovement())
       },
-      getAllEmpty() {
-        return this.getAll().filter(position => position.isEmpty === true)
+      getEmpty(arr) {
+        return arr.filter(position => position.isEmpty === true)
       },
       getRandomEmpty() {
-        return _.sample(this.getAllEmpty())
+        return _.sample(this.getEmpty(this.getAll()))
       },
       createElement() {
 
@@ -107,8 +107,8 @@
 
         if(emptyPosition) {
 
-          var element = document.getElementById("grid-background")
-          var card = document.createElement("DIV")
+          let element = document.getElementById("grid-background");
+          let card = document.createElement("DIV");
           card.classList.add(
             "lighten-2",
             "sliding-card",
@@ -146,7 +146,28 @@
         for (let card of slidingCards) {
           card.style.top = Math.min(300, parseFloat(getComputedStyle(card).top) + 300 ) + 'px'
         }
+      },
+
+      calculateMovement() {
+        const firstRow = this.getFirstRow()
+        console.log(firstRow)
+        firstRow.forEach(posistion => {
+          // do a canMove check
+          // if canMove, find first empty, the shuffle up (?)
+          console.log("posistion")
+          console.log(posistion.name)
+          let emptyPositions = this.getEmpty(this.getFirstRow())
+          let firstEmpty = _.last(emptyPositions)
+          console.log("firstEmpty")
+          console.log(firstEmpty.name)
+        })
+
+
+      },
+      shuffleUp() {
+
       }
+
     }
   }
 
