@@ -93,7 +93,7 @@
         setPositionIsEmpty: 'grid/setPositionIsEmpty'
       }),
       printGrid() {
-        console.log(this.calculateMovement())
+        console.log(this.calculateMovement("right"))
       },
       getEmpty(arr) {
         return arr.filter(position => position.isEmpty === true)
@@ -148,21 +148,47 @@
         }
       },
 
-      calculateMovement() {
-        const firstRow = this.getFirstRow()
-        console.log(firstRow)
-        firstRow.forEach(posistion => {
+      calculateMovement(direction) {
+        var row = this.getFirstRow().slice()
+        if (direction == "right") {
+          row.reverse()
+        }
+        row.forEach(position => {
           // do a canMove check
           // if canMove, find first empty, the shuffle up (?)
-          console.log("posistion")
-          console.log(posistion.name)
-          let emptyPositions = this.getEmpty(this.getFirstRow())
-          let firstEmpty = _.last(emptyPositions)
-          console.log("firstEmpty")
-          console.log(firstEmpty.name)
+          if (!position.isEmpty) {
+            this.canMove(position, row, direction)
+          }
+
         })
 
+      },
+      canMove(position, row, direction) {
 
+        console.log("this position = " + position.name)
+
+        if (position.edge.includes(direction)) {
+          console.log(position.name + " cannot move!! - edge case")
+          return false;
+        }
+
+        let nextPostion = row[ row.indexOf(position) - 1 ]
+
+        if (nextPostion === undefined) {
+          console.log(position.name + " cannot move!! - other edge case")
+          return false;
+        }
+
+        console.log("next position = " + nextPostion.name)
+
+        if (nextPostion.isEmpty) {
+          console.log(position.name + " can move!! - next is empty")
+          console.log("shuffle up")
+          return true
+        } else {
+          console.log(position.name + " cannot move!! - next is full")
+          return false
+        }
       },
       shuffleUp() {
 
