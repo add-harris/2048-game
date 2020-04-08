@@ -73,7 +73,7 @@
 
     data() {
       return {
-        count: 0
+        count: 1
       }
     },
 
@@ -82,6 +82,7 @@
     }),
 
     methods: {
+
       ...mapGetters({
         getFirstRow: 'grid/getFirstRow',
         getSecondRow: 'grid/getSecondRow',
@@ -89,18 +90,24 @@
         getForthRow: 'grid/getForthRow',
         getAll: 'grid/getAll'
       }),
+
       ...mapMutations({
-        setPositionIsEmpty: 'grid/setPositionIsEmpty'
+        setPositionIsEmpty: 'grid/setPositionIsEmpty',
+        setPositionId: 'grid/setPositionId'
       }),
+
       printGrid() {
-        console.log(this.calculateMovement("right"))
+        this.calculateMovement("right")
       },
+
       getEmpty(arr) {
         return arr.filter(position => position.isEmpty === true)
       },
+
       getRandomEmpty() {
         return _.sample(this.getEmpty(this.getAll()))
       },
+
       createElement() {
 
         let emptyPosition = this.getRandomEmpty()
@@ -118,29 +125,39 @@
 
           card.style.top = emptyPosition.top + "px"
           card.style.left = emptyPosition.left + "px"
+          let generatedId = "sliding-card-" + this.count
+          card.id = generatedId
+          console.log(generatedId)
           element.appendChild(card)
+
+          this.setPositionIsEmpty({"name": emptyPosition.name, "bool": false});
+          this.setPositionId({"name": emptyPosition.name, "id": generatedId});
           this.count++
-          this.setPositionIsEmpty(emptyPosition.name, false)
         }
       },
-      slideLeft() {
-        let slidingCards = document.getElementsByClassName("sliding-card");
-        for (let card of slidingCards) {
-          card.style.left = Math.max( 0, parseFloat(getComputedStyle(card).left) - 300 ) + 'px'
-        }
+
+      slide(cardId, top, left) {
+        console.log("slide")
+        console.log(cardId)
+        let card = document.getElementById(cardId);
+        card.style.top = top + 'px'
+        card.style.left = left + 'px'
       },
+
       slideRight() {
         let slidingCards = document.getElementsByClassName("sliding-card");
         for (let card of slidingCards) {
           card.style.left = Math.min(300, parseFloat(getComputedStyle(card).left) + 300 ) + 'px'
         }
       },
+
       slideUp() {
         let slidingCards = document.getElementsByClassName("sliding-card");
         for (let card of slidingCards) {
           card.style.top = Math.max(0, parseFloat(getComputedStyle(card).top) - 300 ) + 'px'
         }
       },
+
       slideDown() {
         let slidingCards = document.getElementsByClassName("sliding-card");
         for (let card of slidingCards) {
@@ -149,52 +166,64 @@
       },
 
       calculateMovement(direction) {
-        var row = this.getFirstRow().slice()
-        if (direction == "right") {
-          row.reverse()
+
+        var row;
+        if (direction === "right") {
+          row = this.getFirstRow().slice().reverse()
+        } else {
+          row = this.getFirstRow().slice()
         }
+
         row.forEach(position => {
           // do a canMove check
-          // if canMove, find first empty, the shuffle up (?)
+          // if canMove, find first empty, then shuffle up (?)
           if (!position.isEmpty) {
-            this.canMove(position, row, direction)
+            let canActuallyMove = this.canMove(position, row, direction)
+
+            if (canActuallyMove) {
+              this.shuffleUp(position, row, direction)
+            }
+
           }
 
         })
-
       },
+
       canMove(position, row, direction) {
 
-        console.log("this position = " + position.name)
-
         if (position.edge.includes(direction)) {
-          console.log(position.name + " cannot move!! - edge case")
           return false;
         }
 
         let nextPostion = row[ row.indexOf(position) - 1 ]
 
         if (nextPostion === undefined) {
-          console.log(position.name + " cannot move!! - other edge case")
           return false;
         }
 
-        console.log("next position = " + nextPostion.name)
-
         if (nextPostion.isEmpty) {
-          console.log(position.name + " can move!! - next is empty")
-          console.log("shuffle up")
           return true
         } else {
-          console.log(position.name + " cannot move!! - next is full")
           return false
         }
       },
-      shuffleUp() {
+
+      shuffleUp(position, row) {
+
+        let firstEmpty = this.getEmpty(row)[0]
+        let cardId = position.id
+
+        this.slide(cardId, firstEmpty.top, firstEmpty.left)
+
+        this.setPositionIsEmpty({"name": position.name, "bool": true});
+        this.setPositionIsEmpty({"name": firstEmpty.name, "bool": false});
+        this.setPositionId({"name": position.name, "id": null});
+        this.setPositionId({"name": firstEmpty.name, "id": cardId});
 
       }
 
     }
+
   }
 
 </script>

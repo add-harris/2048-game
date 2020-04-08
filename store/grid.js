@@ -6,8 +6,8 @@ export const state = () => ({
   position3: new Position("position3",0, 200, true, ["top"]),
   position4: new Position("position4",0, 300, true, ["top", "right"]),
   position5: new Position("position5",100, 0, true, ["left"]),
-  position6: new Position("position6",100, 100),
-  position7: new Position("position7",100, 200),
+  position6: new Position("position6",100, 100, true),
+  position7: new Position("position7",100, 200, true),
   position8: new Position("position8",100, 300, true, ["right"]),
   position9: new Position("position9",200, 0, true, ["left"]),
   position10: new Position("position10",200, 100, true),
@@ -40,9 +40,13 @@ export const getters = {
   }
 }
 
+// multiple parameters must be passed to mutations as a payload object
 export const mutations = {
-  setPositionIsEmpty (state, name, bool) {
-    state[name].isEmpty = bool
+  setPositionIsEmpty (state, obj) {
+    state[obj.name].isEmpty = obj.bool
+  },
+  setPositionId (state, obj) {
+    state[obj.name].id = obj.id
   }
 }
 

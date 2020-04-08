@@ -5,12 +5,14 @@ class Position {
   left = 0;
   isEmpty = true;
   edge = ["not"];
-  constructor(name, top, left, isEmpty, edge) {
+  id = null;
+  constructor(name, top, left, isEmpty, edge, id) {
     this.name = name;
     this.top = top;
     this.left = left;
     this.isEmpty = isEmpty;
-    this.edge = edge
+    this.edge = edge;
+    this.id = id;
   }
 }
 
