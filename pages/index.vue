@@ -127,7 +127,6 @@
           card.style.left = emptyPosition.left + "px"
           let generatedId = "sliding-card-" + this.count
           card.id = generatedId
-          console.log(generatedId)
           element.appendChild(card)
 
           this.setPositionIsEmpty({"name": emptyPosition.name, "bool": false});
@@ -137,32 +136,9 @@
       },
 
       slide(cardId, top, left) {
-        console.log("slide")
-        console.log(cardId)
         let card = document.getElementById(cardId);
         card.style.top = top + 'px'
         card.style.left = left + 'px'
-      },
-
-      slideRight() {
-        let slidingCards = document.getElementsByClassName("sliding-card");
-        for (let card of slidingCards) {
-          card.style.left = Math.min(300, parseFloat(getComputedStyle(card).left) + 300 ) + 'px'
-        }
-      },
-
-      slideUp() {
-        let slidingCards = document.getElementsByClassName("sliding-card");
-        for (let card of slidingCards) {
-          card.style.top = Math.max(0, parseFloat(getComputedStyle(card).top) - 300 ) + 'px'
-        }
-      },
-
-      slideDown() {
-        let slidingCards = document.getElementsByClassName("sliding-card");
-        for (let card of slidingCards) {
-          card.style.top = Math.min(300, parseFloat(getComputedStyle(card).top) + 300 ) + 'px'
-        }
       },
 
       calculateMovement(direction) {
