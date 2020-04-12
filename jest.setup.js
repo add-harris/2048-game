@@ -1,4 +1,4 @@
-// taken from article : https://medium.com/@brandonaaskov/how-to-test-nuxt-stores-with-jest-9a5d55d54b28
+// config taken from article : https://medium.com/@brandonaaskov/how-to-test-nuxt-stores-with-jest-9a5d55d54b28
 
 import { Nuxt, Builder } from "nuxt"
 import nuxtConfig from "./nuxt.config"

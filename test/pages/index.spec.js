@@ -1,4 +1,4 @@
-import { createLocalVue, mount } from '@vue/test-utils'
+import {createLocalVue, mount} from '@vue/test-utils'
 import index from '@/pages/index.vue'
 
 import Vue from 'vue'
@@ -15,22 +15,22 @@ describe('Pages / index.vue', () => {
 
   let NuxtStore
   let store
+  let wrapper
 
   beforeAll(async () => {
-    // note the store will mutate across tests
     const storePath = `${process.env.buildDir}/store.js`
     NuxtStore = await import(storePath)
   })
 
   beforeEach(async () => {
     store = await NuxtStore.createStore()
+    wrapper = mount(index, {attachToDocument: true, localVue, store})
   })
 
-  test('creates a card', () => {
-    const wrapper = mount(index, {attachToDocument: true, localVue, store})
-    wrapper.vm.createElement()
-    expect(wrapper.get("#sliding-card-1"))
+  afterEach(async () => {
+    wrapper.destroy()
   })
+
 
   test('store', () => {
     const x = store.getters['grid/getFirstRow']
@@ -41,13 +41,16 @@ describe('Pages / index.vue', () => {
 
 
   test('gets a random empty slot', () => {
-    const wrapper = mount(index, {attachToDocument: true, localVue, store})
     let x = wrapper.vm.getRandomEmpty()
     console.log(x)
     console.log(x.name)
-
   })
 
+
+  test('creates a card', () => {
+    wrapper.vm.createElement()
+    expect(wrapper.get("#sliding-card-1"))
+  })
 
 
 })

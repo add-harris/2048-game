@@ -114,7 +114,7 @@
 
         if(emptyPosition) {
 
-          let element = document.getElementById("grid-background");
+          let gridBackground = document.getElementById("grid-background");
           let card = document.createElement("DIV");
           card.classList.add(
             "lighten-2",
@@ -127,7 +127,7 @@
           card.style.left = emptyPosition.left + "px"
           let generatedId = "sliding-card-" + this.count
           card.id = generatedId
-          element.appendChild(card)
+          gridBackground.appendChild(card)
 
           this.setPositionIsEmpty({"name": emptyPosition.name, "bool": false});
           this.setPositionId({"name": emptyPosition.name, "id": generatedId});
