@@ -193,7 +193,6 @@
         this.setPositionId({"name": firstEmpty.name, "id": cardId});
 
       }
-
     }
 
   }
