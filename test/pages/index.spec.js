@@ -19,27 +19,40 @@ describe('Pages / index.vue', () => {
   let wrapper
 
   // test variables
-  let emptyPosition1 = new Position("position1", 0, 0, true, ["top"], null)
-  let fullPosition1 = new Position("position2", 100, 100, false, ["bottom"], "some-id-1")
+  let emptyPosition1 = new Position("position1", 0, 0, true, ["up"], null)
+  let fullPosition1 = new Position("position2", 100, 100, false, ["down"], "some-id-1")
   let emptyPosition2 = new Position("position3", 200, 200, true, ["left"], null)
   let fullPosition2 = new Position("position4", 300, 300, false, ["right"], "some-id-2")
 
-  let setPositionIsEmpty = jest.fn()
-  let setPositionId = jest.fn()
+  let row = [emptyPosition1, fullPosition1, emptyPosition2, fullPosition2]
+
+  // test helpers
+  let mockSetPositionIsEmpty
+  let mockSetPositionId
 
   function createStore() {
+
     let getters = {
       "grid/getAll": () => [emptyPosition1, fullPosition1]
     }
 
+    mockSetPositionIsEmpty = jest.fn()
+    mockSetPositionId = jest.fn()
+
     let mutations = {
-      "grid/setPositionIsEmpty": () => setPositionIsEmpty,
-      "grid/setPositionId": () => setPositionId
+      "grid/setPositionIsEmpty": mockSetPositionIsEmpty,
+      "grid/setPositionId": mockSetPositionId
     }
 
-    let newStore = new Vuex.Store({ getters, mutations })
+    return new Vuex.Store({ getters, mutations })
+  }
 
-    return newStore
+  function createDummyCard() {
+    let dummyCard = document.createElement("DIV")
+    dummyCard.id = "dummy-card"
+    dummyCard.top = "0px"
+    dummyCard.left = "0px"
+    return dummyCard
   }
 
   // hooks
@@ -54,11 +67,10 @@ describe('Pages / index.vue', () => {
 
 
   test('getEmpty() - returns only empty positions', () => {
-    let positions = [emptyPosition1, fullPosition1, emptyPosition2, emptyPosition2]
-    expect(wrapper.vm.getEmpty(positions)).toContain(emptyPosition1)
-    expect(wrapper.vm.getEmpty(positions)).toContain(emptyPosition2)
-    expect(wrapper.vm.getEmpty(positions)).not.toContain(fullPosition1)
-    expect(wrapper.vm.getEmpty(positions)).not.toContain(fullPosition2)
+    expect(wrapper.vm.getEmpty(row)).toContain(emptyPosition1)
+    expect(wrapper.vm.getEmpty(row)).toContain(emptyPosition2)
+    expect(wrapper.vm.getEmpty(row)).not.toContain(fullPosition1)
+    expect(wrapper.vm.getEmpty(row)).not.toContain(fullPosition2)
   })
 
   test('getRandomEmpty() - gets a random empty slot', () => {
@@ -66,16 +78,82 @@ describe('Pages / index.vue', () => {
   })
 
 
-  test('createElement() - creates a new card element', () => {
-    wrapper.vm.createElement()
+  test('generateCard() - creates a new card element', () => {
+    wrapper.vm.generateCard()
     expect(wrapper.get("#sliding-card-1"))
-    expect(setPositionIsEmpty).toBeCalled
+    expect(mockSetPositionIsEmpty).toBeCalled()
   })
 
-  test('createElement() - updates the store', () => {
-    wrapper.vm.createElement()
-    expect(setPositionIsEmpty).toBeCalled
-    expect(setPositionId).toBeCalled
+  test('generateCard() - updates the store', () => {
+    wrapper.vm.generateCard()
+    expect(mockSetPositionIsEmpty).toBeCalled()
+    expect(mockSetPositionId).toBeCalled()
+  })
+
+  test('slide() - updates position values of target', () => {
+    wrapper.element.querySelector("#grid-background")
+      .appendChild(createDummyCard())
+
+    wrapper.vm.slide("dummy-card", 110, 120)
+    expect(wrapper.find("#dummy-card").attributes().style).toContain("top: 110px")
+    expect(wrapper.find("#dummy-card").attributes().style).toContain("left: 120px")
+  })
+
+  test('calculateMovement()', () => {
+
+  })
+
+  test('canMove() - return false if position is already at the edge', () => {
+    expect(wrapper.vm.canMove(emptyPosition1, row, "up")).toBeFalsy()
+    expect(wrapper.vm.canMove(fullPosition1, row, "down")).toBeFalsy()
+    expect(wrapper.vm.canMove(emptyPosition2, row, "left")).toBeFalsy()
+    expect(wrapper.vm.canMove(fullPosition2, row, "right")).toBeFalsy()
+  })
+
+  test('canMove() - return false if next position is already full', () => {
+    let cantMoveRow = [fullPosition1, fullPosition2, emptyPosition1, emptyPosition2]
+    expect(wrapper.vm.canMove(fullPosition2, cantMoveRow, "any")).toBeFalsy()
+  })
+
+  test('canMove() - return true if position can move', () => {
+    expect(wrapper.vm.canMove(fullPosition1, row, "any")).toBeTruthy()
+    expect(wrapper.vm.canMove(fullPosition2, row, "any")).toBeTruthy()
+  })
+
+  test('shuffleUp() - triggers slide to new position', () => {
+    // replace function with a mock
+    wrapper.vm.slide = jest.fn()
+    // replace function with a mock & provide return value or mock implementation
+    wrapper.vm.getEmpty = jest.fn(() => [emptyPosition1])
+    wrapper.vm.shuffleUp(fullPosition1, row)
+    expect(wrapper.vm.slide).toBeCalledWith(fullPosition1.id, emptyPosition1.top, emptyPosition1.left)
+
+  })
+
+  test('shuffleUp() - updates new position in the store', () => {
+    // replace function with a mock
+    wrapper.vm.slide = jest.fn()
+    // replace function with a mock & provide return value or mock implementation
+    wrapper.vm.getEmpty = jest.fn(() => [emptyPosition1])
+    wrapper.vm.shuffleUp(fullPosition1, row)
+    expect(mockSetPositionIsEmpty).toHaveBeenCalledTimes(2)
+    expect(mockSetPositionId).toHaveBeenCalledTimes(2)
+    // first parameter of setters is actually 'state', so here expect.anything() is used
+    expect(mockSetPositionIsEmpty).toHaveBeenNthCalledWith(2, expect.anything(), { "name": emptyPosition1.name, "bool": false })
+    expect(mockSetPositionId).toHaveBeenNthCalledWith(2, expect.anything(), { "name": emptyPosition1.name, "id": fullPosition1.id })
+  })
+
+  test('shuffleUp() - clears old position in the store', () => {
+    // replace function with a mock
+    wrapper.vm.slide = jest.fn()
+    // replace function with a mock & provide return value or mock implementation
+    wrapper.vm.getEmpty = jest.fn(() => [emptyPosition1])
+    wrapper.vm.shuffleUp(fullPosition1, row)
+    expect(mockSetPositionIsEmpty).toHaveBeenCalledTimes(2)
+    expect(mockSetPositionId).toHaveBeenCalledTimes(2)
+    // first parameter of setters is actually 'state', so here expect.anything() is used
+    expect(mockSetPositionIsEmpty).toHaveBeenNthCalledWith(1, expect.anything(), { "name": fullPosition1.name, "bool": true })
+    expect(mockSetPositionId).toHaveBeenNthCalledWith(1, expect.anything(), { "name": fullPosition1.name, "id": null })
   })
 
 })

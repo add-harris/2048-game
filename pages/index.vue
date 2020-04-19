@@ -44,7 +44,7 @@
                 <div style="margin: 10px">
 
                   <v-btn color="primary" @click="printGrid()">print</v-btn>
-                  <v-btn color="primary" @click="createElement()">create</v-btn>
+                  <v-btn color="primary" @click="generateCard()">create</v-btn>
 
                 </div>
               </v-row>
@@ -108,7 +108,7 @@
         return _.sample(this.getEmpty(this.getAll()))
       },
 
-      createElement() {
+      generateCard() {
 
         let emptyPosition = this.getRandomEmpty()
 
@@ -172,10 +172,6 @@
         }
 
         let nextPostion = row[ row.indexOf(position) - 1 ]
-
-        if (nextPostion === undefined) {
-          return false;
-        }
 
         if (nextPostion.isEmpty) {
           return true
