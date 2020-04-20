@@ -32,6 +32,18 @@ export const getters = {
   getForthRow (state) {
     return [state.position13, state.position14, state.position15, state.position16]
   },
+  getFirstColumn (state) {
+    return [state.position1, state.position5, state.position9, state.position13]
+  },
+  getSecondColumn (state) {
+    return [state.position2, state.position6, state.position10, state.position14]
+  },
+  getThirdColumn (state) {
+    return [state.position3, state.position7, state.position11, state.position15]
+  },
+  getForthColumn (state) {
+    return [state.position4, state.position8, state.position12, state.position16]
+  },
   getAll (state) {
     return [state.position1, state.position2, state.position3, state.position4,
             state.position5, state.position6, state.position7, state.position8,

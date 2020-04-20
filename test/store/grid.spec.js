@@ -76,5 +76,41 @@ describe('Store test / grid.js', () => {
     })
   })
 
+  test('getFirstColumn', () => {
+    let firstColumnNames = ["position1", "position5", "position9", "position13"]
+    const getFirstColumn = store.getters['grid/getFirstColumn']
+
+    getFirstColumn.forEach( (position, index) => {
+      expect(position.name).toBe(firstColumnNames[index])
+    })
+  })
+
+  test('getSecondColumn', () => {
+    let secondColumnNames = ["position2", "position6", "position10", "position14"]
+    const getSecondColumn = store.getters['grid/getSecondColumn']
+
+    getSecondColumn.forEach( (position, index) => {
+      expect(position.name).toBe(secondColumnNames[index])
+    })
+  })
+
+  test('getThirdColumn', () => {
+    let thirdColumnNames = ["position3", "position7", "position11", "position15"]
+    const getThirdColumn = store.getters['grid/getThirdColumn']
+
+    getThirdColumn.forEach( (position, index) => {
+      expect(position.name).toBe(thirdColumnNames[index])
+    })
+  })
+
+  test('getForthColumn', () => {
+    let forthColumnNames = ["position4", "position8", "position12", "position16"]
+    const getForthColumn = store.getters['grid/getForthColumn']
+
+    getForthColumn.forEach( (position, index) => {
+      expect(position.name).toBe(forthColumnNames[index])
+    })
+  })
+
 
 })

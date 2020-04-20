@@ -143,7 +143,11 @@
 
       calculateMovement(direction) {
 
-        var row;
+        // get all rows or columns based on direction
+        // collection of rows
+        // map to reverse rows based on diirection
+
+        let row;
         if (direction === "right") {
           row = this.getFirstRow().slice().reverse()
         } else {
