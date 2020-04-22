@@ -202,11 +202,10 @@
         this.setPositionId({"name": position.name, "id": null});
         this.setPositionId({"name": firstEmpty.name, "id": cardId});
 
+      },
+      getRowsToMove(direction) {
+
       }
-    },
-
-    getRowsToMove() {
-
     }
 
   }

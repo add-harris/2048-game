@@ -19,12 +19,12 @@ describe('Pages / index.vue', () => {
   let wrapper
 
   // test variables
-  let emptyPosition1 = new Position("position1", 0, 0, true, ["up"], null)
-  let fullPosition1 = new Position("position2", 100, 100, false, ["down"], "some-id-1")
-  let emptyPosition2 = new Position("position3", 200, 200, true, ["left"], null)
-  let fullPosition2 = new Position("position4", 300, 300, false, ["right"], "some-id-2")
+  let position1 = new Position("position1", 0, 0, true, ["up"], null)
+  let position2 = new Position("position2", 100, 100, false, ["down"], "some-id-1")
+  let position3 = new Position("position3", 200, 200, true, ["left"], null)
+  let position4 = new Position("position4", 300, 300, false, ["right"], "some-id-2")
 
-  let row = [emptyPosition1, fullPosition1, emptyPosition2, fullPosition2]
+  let row = [position1, position2, position3, position4]
 
   // test helpers
   let mockGetFirstRow
@@ -95,14 +95,14 @@ describe('Pages / index.vue', () => {
 
 
   test('getEmpty() - returns only empty positions', () => {
-    expect(wrapper.vm.getEmpty(row)).toContain(emptyPosition1)
-    expect(wrapper.vm.getEmpty(row)).toContain(emptyPosition2)
-    expect(wrapper.vm.getEmpty(row)).not.toContain(fullPosition1)
-    expect(wrapper.vm.getEmpty(row)).not.toContain(fullPosition2)
+    expect(wrapper.vm.getEmpty(row)).toContain(position1)
+    expect(wrapper.vm.getEmpty(row)).toContain(position3)
+    expect(wrapper.vm.getEmpty(row)).not.toContain(position2)
+    expect(wrapper.vm.getEmpty(row)).not.toContain(position4)
   })
 
   test('getRandomEmpty() - gets a random empty slot', () => {
-    let possibleEmpties = [emptyPosition1, emptyPosition2]
+    let possibleEmpties = [position1, position3]
     for (let i = 0; i < 10; i++) {
       expect(possibleEmpties.includes(wrapper.vm.getRandomEmpty())).toBeTruthy()
     }
@@ -135,29 +135,29 @@ describe('Pages / index.vue', () => {
   })
 
   test('canMove() - return false if position is already at the edge', () => {
-    expect(wrapper.vm.canMove(emptyPosition1, row, "up")).toBeFalsy()
-    expect(wrapper.vm.canMove(fullPosition1, row, "down")).toBeFalsy()
-    expect(wrapper.vm.canMove(emptyPosition2, row, "left")).toBeFalsy()
-    expect(wrapper.vm.canMove(fullPosition2, row, "right")).toBeFalsy()
+    expect(wrapper.vm.canMove(position1, row, "up")).toBeFalsy()
+    expect(wrapper.vm.canMove(position2, row, "down")).toBeFalsy()
+    expect(wrapper.vm.canMove(position3, row, "left")).toBeFalsy()
+    expect(wrapper.vm.canMove(position4, row, "right")).toBeFalsy()
   })
 
   test('canMove() - return false if next position is already full', () => {
-    let cantMoveRow = [fullPosition1, fullPosition2, emptyPosition1, emptyPosition2]
-    expect(wrapper.vm.canMove(fullPosition2, cantMoveRow, "any")).toBeFalsy()
+    let cantMoveRow = [position2, position4, position1, position3]
+    expect(wrapper.vm.canMove(position4, cantMoveRow, "any")).toBeFalsy()
   })
 
   test('canMove() - return true if position can move', () => {
-    expect(wrapper.vm.canMove(fullPosition1, row, "any")).toBeTruthy()
-    expect(wrapper.vm.canMove(fullPosition2, row, "any")).toBeTruthy()
+    expect(wrapper.vm.canMove(position2, row, "any")).toBeTruthy()
+    expect(wrapper.vm.canMove(position4, row, "any")).toBeTruthy()
   })
 
   test('shuffleUp() - triggers slide to new position', () => {
     // replace function with a mock
     wrapper.vm.slide = jest.fn()
     // replace function with a mock & provide return value or mock implementation
-    wrapper.vm.getEmpty = jest.fn(() => [emptyPosition1])
-    wrapper.vm.shuffleUp(fullPosition1, row)
-    expect(wrapper.vm.slide).toBeCalledWith(fullPosition1.id, emptyPosition1.top, emptyPosition1.left)
+    wrapper.vm.getEmpty = jest.fn(() => [position1])
+    wrapper.vm.shuffleUp(position2, row)
+    expect(wrapper.vm.slide).toBeCalledWith(position2.id, position1.top, position1.left)
 
   })
 
@@ -165,30 +165,35 @@ describe('Pages / index.vue', () => {
     // replace function with a mock
     wrapper.vm.slide = jest.fn()
     // replace function with a mock & provide return value or mock implementation
-    wrapper.vm.getEmpty = jest.fn(() => [emptyPosition1])
-    wrapper.vm.shuffleUp(fullPosition1, row)
+    wrapper.vm.getEmpty = jest.fn(() => [position1])
+    wrapper.vm.shuffleUp(position2, row)
     expect(mockSetPositionIsEmpty).toHaveBeenCalledTimes(2)
     expect(mockSetPositionId).toHaveBeenCalledTimes(2)
     // first parameter of setters is actually 'state', so here expect.anything() is used
-    expect(mockSetPositionIsEmpty).toHaveBeenNthCalledWith(2, expect.anything(), { "name": emptyPosition1.name, "bool": false })
-    expect(mockSetPositionId).toHaveBeenNthCalledWith(2, expect.anything(), { "name": emptyPosition1.name, "id": fullPosition1.id })
+    expect(mockSetPositionIsEmpty).toHaveBeenNthCalledWith(2, expect.anything(), { "name": position1.name, "bool": false })
+    expect(mockSetPositionId).toHaveBeenNthCalledWith(2, expect.anything(), { "name": position1.name, "id": position2.id })
   })
 
   test('shuffleUp() - clears old position in the store', () => {
     // replace function with a mock
     wrapper.vm.slide = jest.fn()
     // replace function with a mock & provide return value or mock implementation
-    wrapper.vm.getEmpty = jest.fn(() => [emptyPosition1])
-    wrapper.vm.shuffleUp(fullPosition1, row)
+    wrapper.vm.getEmpty = jest.fn(() => [position1])
+    wrapper.vm.shuffleUp(position2, row)
     expect(mockSetPositionIsEmpty).toHaveBeenCalledTimes(2)
     expect(mockSetPositionId).toHaveBeenCalledTimes(2)
     // first parameter of setters is actually 'state', so here expect.anything() is used
-    expect(mockSetPositionIsEmpty).toHaveBeenNthCalledWith(1, expect.anything(), { "name": fullPosition1.name, "bool": true })
-    expect(mockSetPositionId).toHaveBeenNthCalledWith(1, expect.anything(), { "name": fullPosition1.name, "id": null })
+    expect(mockSetPositionIsEmpty).toHaveBeenNthCalledWith(1, expect.anything(), { "name": position2.name, "bool": true })
+    expect(mockSetPositionId).toHaveBeenNthCalledWith(1, expect.anything(), { "name": position2.name, "id": null })
   })
 
   test('getRowsToMove() - returns rows from right to left if direction is right i.e. pos4, pos3, pos2, pos1', () => {
-    // expect(wrapper.vm.getRowsToMove("right")).
+    let positionsRightToLeft = [position4, position3, position2, position1]
+
+    wrapper.vm.getRowsToMove("right").forEach( row => {
+      expect(row).toBe(positionsRightToLeft)
+    })
+
   })
 
 })
