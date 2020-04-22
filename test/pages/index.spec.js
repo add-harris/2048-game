@@ -27,13 +27,41 @@ describe('Pages / index.vue', () => {
   let row = [emptyPosition1, fullPosition1, emptyPosition2, fullPosition2]
 
   // test helpers
+  let mockGetFirstRow
+  let mockGetSecondRow
+  let mockGetThirdRow
+  let mockGetForthRow
+  let mockGetFirstColumn
+  let mockGetSecondColumn
+  let mockGetThirdColumn
+  let mockGetForthColumn
+  let mockGetAll
+
   let mockSetPositionIsEmpty
   let mockSetPositionId
 
   function createStore() {
 
+    mockGetFirstRow = jest.fn()
+    mockGetSecondRow = jest.fn()
+    mockGetThirdRow = jest.fn()
+    mockGetForthRow = jest.fn()
+    mockGetFirstColumn = jest.fn()
+    mockGetSecondColumn = jest.fn()
+    mockGetThirdColumn = jest.fn()
+    mockGetForthColumn = jest.fn()
+    mockGetAll = jest.fn(() => row)
+
     let getters = {
-      "grid/getAll": () => [emptyPosition1, fullPosition1]
+      'grid/getFirstRow': mockGetFirstRow,
+      'grid/getSecondRow': mockGetSecondRow,
+      'grid/getThirdRow': mockGetThirdRow,
+      'grid/getForthRow': mockGetForthRow,
+      'grid/getFirstColumn': mockGetFirstColumn,
+      'grid/getSecondColumn': mockGetSecondColumn,
+      'grid/getThirdColumn': mockGetThirdColumn,
+      'grid/getForthColumn': mockGetForthColumn,
+      "grid/getAll": mockGetAll
     }
 
     mockSetPositionIsEmpty = jest.fn()
@@ -74,20 +102,23 @@ describe('Pages / index.vue', () => {
   })
 
   test('getRandomEmpty() - gets a random empty slot', () => {
-    expect(wrapper.vm.getRandomEmpty()).toBe(emptyPosition1)
+    let possibleEmpties = [emptyPosition1, emptyPosition2]
+    for (let i = 0; i < 10; i++) {
+      expect(possibleEmpties.includes(wrapper.vm.getRandomEmpty())).toBeTruthy()
+    }
   })
 
 
   test('generateCard() - creates a new card element', () => {
     wrapper.vm.generateCard()
     expect(wrapper.get("#sliding-card-1"))
-    expect(mockSetPositionIsEmpty).toBeCalled()
+    expect(mockSetPositionIsEmpty).toHaveBeenCalledTimes(1)
   })
 
   test('generateCard() - updates the store', () => {
     wrapper.vm.generateCard()
-    expect(mockSetPositionIsEmpty).toBeCalled()
-    expect(mockSetPositionId).toBeCalled()
+    expect(mockSetPositionIsEmpty).toHaveBeenCalledTimes(1)
+    expect(mockSetPositionId).toHaveBeenCalledTimes(1)
   })
 
   test('slide() - updates position values of target', () => {
@@ -154,6 +185,10 @@ describe('Pages / index.vue', () => {
     // first parameter of setters is actually 'state', so here expect.anything() is used
     expect(mockSetPositionIsEmpty).toHaveBeenNthCalledWith(1, expect.anything(), { "name": fullPosition1.name, "bool": true })
     expect(mockSetPositionId).toHaveBeenNthCalledWith(1, expect.anything(), { "name": fullPosition1.name, "id": null })
+  })
+
+  test('getRowsToMove() - returns rows from right to left if direction is right i.e. pos4, pos3, pos2, pos1', () => {
+    // expect(wrapper.vm.getRowsToMove("right")).
   })
 
 })

@@ -84,11 +84,15 @@
     methods: {
 
       ...mapGetters({
-        getFirstRow: 'grid/getFirstRow',
-        getSecondRow: 'grid/getSecondRow',
-        getThirdRow: 'grid/getThirdRow',
-        getForthRow: 'grid/getForthRow',
-        getAll: 'grid/getAll'
+        getFirstRow:      'grid/getFirstRow',
+        getSecondRow:     'grid/getSecondRow',
+        getThirdRow:      'grid/getThirdRow',
+        getForthRow:      'grid/getForthRow',
+        getFirstColumn:   'grid/getFirstColumn',
+        getSecondColumn:  'grid/getSecondColumn',
+        getThirdColumn:   'grid/getThirdColumn',
+        getForthColumn:   'grid/getForthColumn',
+        getAll:           'grid/getAll'
       }),
 
       ...mapMutations({
@@ -147,6 +151,8 @@
         // collection of rows
         // map to reverse rows based on diirection
 
+        let rowsToMove = this.getRowsToMove(direction)
+
         let row;
         if (direction === "right") {
           row = this.getFirstRow().slice().reverse()
@@ -197,6 +203,10 @@
         this.setPositionId({"name": firstEmpty.name, "id": cardId});
 
       }
+    },
+
+    getRowsToMove() {
+
     }
 
   }
