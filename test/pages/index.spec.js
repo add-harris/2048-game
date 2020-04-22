@@ -46,10 +46,10 @@ describe('Pages / index.vue', () => {
     mockGetSecondRow = jest.fn(() => row)
     mockGetThirdRow = jest.fn(() => row)
     mockGetForthRow = jest.fn(() => row)
-    mockGetFirstColumn = jest.fn()
-    mockGetSecondColumn = jest.fn()
-    mockGetThirdColumn = jest.fn()
-    mockGetForthColumn = jest.fn()
+    mockGetFirstColumn = jest.fn(() => row)
+    mockGetSecondColumn = jest.fn(() => row)
+    mockGetThirdColumn = jest.fn(() => row)
+    mockGetForthColumn = jest.fn(() => row)
     mockGetAll = jest.fn(() => row)
 
     let getters = {
@@ -200,6 +200,22 @@ describe('Pages / index.vue', () => {
 
     wrapper.vm.getRowsToMove("left").forEach( row => {
       expect(row).toEqual(positionsLeftToRight)
+    })
+  })
+
+  test('getRowsToMove() - returns rows from top to bottom if direction is up i.e. pos1, pos2, pos3, pos4', () => {
+    let positionsTopToBottom = [position1, position2, position3, position4]
+
+    wrapper.vm.getRowsToMove("up").forEach(row => {
+      expect(row).toEqual(positionsTopToBottom)
+    })
+  })
+
+  test('getRowsToMove() - returns rows from bottom to top if direction is down i.e. pos1, pos2, pos3, pos4', () => {
+    let positionsBottomToTop = [position4, position3, position2, position1]
+
+    wrapper.vm.getRowsToMove("down").forEach(row => {
+      expect(row).toEqual(positionsBottomToTop)
     })
   })
 
