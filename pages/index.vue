@@ -112,6 +112,14 @@
         return _.sample(this.getEmpty(this.getAll()))
       },
 
+      getAllRows() {
+        return [this.getFirstRow(), this.getSecondRow(), this.getThirdRow(), this.getForthRow()]
+      },
+
+      getAllColumns() {
+        return [this.getFirstColumn(), this.getSecondColumn(), this.getThirdColumn(), this.getForthColumn()]
+      },
+
       generateCard() {
 
         let emptyPosition = this.getRandomEmpty()
@@ -203,26 +211,20 @@
         this.setPositionId({"name": firstEmpty.name, "id": cardId});
 
       },
-      getRowsToMove(direction) {
-        let row1, row2, row3, row4
-        if (direction === "right" || direction === "left") {
-          row1 = this.getFirstRow()
-          row2 = this.getSecondRow()
-          row3 = this.getThirdRow()
-          row4 = this.getForthRow()
-        } else if (direction === "up" || direction === "down") {
-          row1 = this.getFirstColumn()
-          row2 = this.getSecondColumn()
-          row3 = this.getThirdColumn()
-          row4 = this.getForthColumn()
-        }
-        let rows = [row1, row2, row3, row4]
-        if (direction === "right" || direction === "down") {
-          rows = rows.map(row => row.slice().reverse())
-        }
-        return rows
 
+      getRowsToMove(direction) {
+        switch (direction) {
+          case "left":
+            return this.getAllRows()
+          case "right":
+            return this.getAllRows().map(row => row.slice().reverse())
+          case "up":
+            return this.getAllColumns()
+          case "down":
+            return this.getAllColumns().map(row => row.slice().reverse())
+        }
       }
+
     }
 
   }

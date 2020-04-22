@@ -108,6 +108,26 @@ describe('Pages / index.vue', () => {
     }
   })
 
+  test('getAllRows() - get arr of all rows from the store', () => {
+    wrapper.vm.getAllRows().forEach(row => {
+      expect(row).toBe(row)
+    })
+    expect(mockGetFirstRow).toHaveBeenCalledTimes(1)
+    expect(mockGetSecondRow).toHaveBeenCalledTimes(1)
+    expect(mockGetThirdRow).toHaveBeenCalledTimes(1)
+    expect(mockGetForthRow).toHaveBeenCalledTimes(1)
+  })
+
+  test('getAllColumns() - get arr of all rows from the store', () => {
+    wrapper.vm.getAllColumns().forEach(row => {
+      expect(row).toBe(row)
+    })
+    expect(mockGetFirstColumn).toHaveBeenCalledTimes(1)
+    expect(mockGetSecondColumn).toHaveBeenCalledTimes(1)
+    expect(mockGetThirdColumn).toHaveBeenCalledTimes(1)
+    expect(mockGetForthColumn).toHaveBeenCalledTimes(1)
+  })
+
 
   test('generateCard() - creates a new card element', () => {
     wrapper.vm.generateCard()
