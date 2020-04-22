@@ -42,10 +42,10 @@ describe('Pages / index.vue', () => {
 
   function createStore() {
 
-    mockGetFirstRow = jest.fn()
-    mockGetSecondRow = jest.fn()
-    mockGetThirdRow = jest.fn()
-    mockGetForthRow = jest.fn()
+    mockGetFirstRow = jest.fn(() => row)
+    mockGetSecondRow = jest.fn(() => row)
+    mockGetThirdRow = jest.fn(() => row)
+    mockGetForthRow = jest.fn(() => row)
     mockGetFirstColumn = jest.fn()
     mockGetSecondColumn = jest.fn()
     mockGetThirdColumn = jest.fn()
@@ -190,10 +190,17 @@ describe('Pages / index.vue', () => {
   test('getRowsToMove() - returns rows from right to left if direction is right i.e. pos4, pos3, pos2, pos1', () => {
     let positionsRightToLeft = [position4, position3, position2, position1]
 
-    wrapper.vm.getRowsToMove("right").forEach( row => {
-      expect(row).toBe(positionsRightToLeft)
+    wrapper.vm.getRowsToMove("right").forEach(row => {
+      expect(row).toEqual(positionsRightToLeft)
     })
+  })
 
+  test('getRowsToMove() - returns rows from left to right if direction is left i.e. pos1, pos2, pos3, pos4', () => {
+    let positionsLeftToRight = [position1, position2, position3, position4]
+
+    wrapper.vm.getRowsToMove("left").forEach( row => {
+      expect(row).toEqual(positionsLeftToRight)
+    })
   })
 
 })

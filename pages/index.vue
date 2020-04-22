@@ -204,6 +204,18 @@
 
       },
       getRowsToMove(direction) {
+        let row1, row2, row3, row4
+        if (direction === "right" || direction == "left") {
+          row1 = this.getFirstRow()
+          row2 = this.getSecondRow()
+          row3 = this.getThirdRow()
+          row4 = this.getForthRow()
+        }
+        let rows = [row1, row2, row3, row4]
+        if (direction == "right") {
+          rows = rows.map(row => row.slice().reverse())
+        }
+        return rows
 
       }
     }
