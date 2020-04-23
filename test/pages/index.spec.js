@@ -150,10 +150,6 @@ describe('Pages / index.vue', () => {
     expect(wrapper.find("#dummy-card").attributes().style).toContain("left: 120px")
   })
 
-  test('calculateMovement()', () => {
-
-  })
-
   test('canMove() - return false if position is already at the edge', () => {
     expect(wrapper.vm.canMove(position1, row, "up")).toBeFalsy()
     expect(wrapper.vm.canMove(position2, row, "down")).toBeFalsy()
@@ -237,6 +233,41 @@ describe('Pages / index.vue', () => {
     wrapper.vm.getRowsToMove("down").forEach(row => {
       expect(row).toEqual(positionsBottomToTop)
     })
+  })
+
+  test('calculateMovement() - gets all rows to move', () => {
+    wrapper.vm.getRowsToMove = jest.fn(() => [])
+    wrapper.vm.calculateMovement("right")
+    expect(wrapper.vm.getRowsToMove).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.getRowsToMove).toHaveBeenCalledWith("right")
+  })
+
+  test('calculateMovement() - gets all rows to move', () => {
+    wrapper.vm.getRowsToMove = jest.fn(() => [])
+    wrapper.vm.calculateMovement("up")
+    expect(wrapper.vm.getRowsToMove).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.getRowsToMove).toHaveBeenCalledWith("up")
+  })
+
+  test('calculateMovement() - cycles through all non-empty positions to check if they can move', () => {
+    wrapper.vm.getRowsToMove = jest.fn(() => [ row ])
+    wrapper.vm.canMove = jest.fn()
+    wrapper.vm.calculateMovement("right")
+    expect(wrapper.vm.canMove).toHaveBeenCalledTimes(2)
+    expect(wrapper.vm.canMove).toHaveBeenNthCalledWith(1, position2, row, "right")
+    expect(wrapper.vm.canMove).toHaveBeenNthCalledWith(2, position4, row, "right")
+  })
+
+  test('calculateMovement() - triggers any positions that can move to move (shuffle up)', () => {
+    wrapper.vm.getRowsToMove = jest.fn(() => [ row, row ])
+    wrapper.vm.canMove = jest.fn(() => true)
+    wrapper.vm.shuffleUp = jest.fn()
+    wrapper.vm.calculateMovement("left")
+    expect(wrapper.vm.shuffleUp).toHaveBeenCalledTimes(4)
+    expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(1, position2, row, "left")
+    expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(2, position4, row, "left")
+    expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(3, position2, row, "left")
+    expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(4, position4, row, "left")
   })
 
 })

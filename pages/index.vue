@@ -32,10 +32,10 @@
               <v-row>
                 <div style="margin: 10px">
 
-                  <v-btn color="primary" @click="slideLeft()">Slide Left</v-btn>
-                  <v-btn color="primary" @click="slideUp()">Slide Up</v-btn>
-                  <v-btn color="primary" @click="slideRight()">Slide Right</v-btn>
-                  <v-btn color="primary" @click="slideDown()">Slide Down</v-btn>
+                  <v-btn color="primary" @click="calculateMovement('left')">Slide Left</v-btn>
+                  <v-btn color="primary" @click="calculateMovement('up')">Slide Up</v-btn>
+                  <v-btn color="primary" @click="calculateMovement('right')">Slide Right</v-btn>
+                  <v-btn color="primary" @click="calculateMovement('down')">Slide Down</v-btn>
 
 
                 </div>
@@ -153,49 +153,15 @@
         card.style.left = left + 'px'
       },
 
-      calculateMovement(direction) {
-
-        // get all rows or columns based on direction
-        // collection of rows
-        // map to reverse rows based on diirection
-
-        let rowsToMove = this.getRowsToMove(direction)
-
-        let row;
-        if (direction === "right") {
-          row = this.getFirstRow().slice().reverse()
-        } else {
-          row = this.getFirstRow().slice()
-        }
-
-        row.forEach(position => {
-          // do a canMove check
-          // if canMove, find first empty, then shuffle up (?)
-          if (!position.isEmpty) {
-            let canActuallyMove = this.canMove(position, row, direction)
-
-            if (canActuallyMove) {
-              this.shuffleUp(position, row, direction)
-            }
-
-          }
-
-        })
-      },
-
       canMove(position, row, direction) {
 
         if (position.edge.includes(direction)) {
           return false;
         }
-
         let nextPostion = row[ row.indexOf(position) - 1 ]
 
-        if (nextPostion.isEmpty) {
-          return true
-        } else {
-          return false
-        }
+        return nextPostion.isEmpty
+
       },
 
       shuffleUp(position, row) {
@@ -223,6 +189,26 @@
           case "down":
             return this.getAllColumns().map(row => row.slice().reverse())
         }
+      },
+
+      calculateMovement(direction) {
+
+        // get all rows or columns based on direction
+        let rows = this.getRowsToMove(direction)
+
+        rows.forEach( row => {
+          row.forEach( position => {
+            // do a canMove check
+            // if canMove, find first empty, then shuffle up (?)
+            if (!position.isEmpty) {
+              let canActuallyMove = this.canMove(position, row, direction)
+
+              if (canActuallyMove) {
+                this.shuffleUp(position, row, direction)
+              }
+            }
+          })
+        })
       }
 
     }

@@ -4,7 +4,7 @@ class Position {
   top = 0;
   left = 0;
   isEmpty = true;
-  edge = ["not"];
+  edge = [];
   id = null;
   constructor(name, top, left, isEmpty, edge, id) {
     this.name = name;
