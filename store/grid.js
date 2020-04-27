@@ -2,21 +2,21 @@ import {Position} from "../utils/Position";
 
 export const state = () => ({
   position1: new Position("position1",0, 0, true, ["up", "left"], null),
-  position2: new Position("position2",0, 100, true, ["up"], null),
-  position3: new Position("position3",0, 200, true, ["up"], null),
-  position4: new Position("position4",0, 300, true, ["up", "right"], null),
-  position5: new Position("position5",100, 0, true, ["left"], null),
-  position6: new Position("position6",100, 100, true, [], null),
-  position7: new Position("position7",100, 200, true, [], null),
-  position8: new Position("position8",100, 300, true, ["right"], null),
-  position9: new Position("position9",200, 0, true, ["left"], null),
-  position10: new Position("position10",200, 100, true, [], null),
-  position11: new Position("position11",200, 200, true, [], null),
-  position12: new Position("position12",200, 300, true, ["right"], null),
-  position13: new Position("position13",300, 0, true, ["down", "left"], null),
-  position14: new Position("position14",300, 100, true, ["down"], null),
-  position15: new Position("position15",300, 200, true, ["down"], null),
-  position16: new Position("position16",300, 300, true, ["down", "right"], null)
+  position2: new Position("position2",0, 80, true, ["up"], null),
+  position3: new Position("position3",0, 160, true, ["up"], null),
+  position4: new Position("position4",0, 240, true, ["up", "right"], null),
+  position5: new Position("position5",80, 0, true, ["left"], null),
+  position6: new Position("position6",80, 80, true, [], null),
+  position7: new Position("position7",80, 160, true, [], null),
+  position8: new Position("position8",80, 240, true, ["right"], null),
+  position9: new Position("position9",160, 0, true, ["left"], null),
+  position10: new Position("position10",160, 80, true, [], null),
+  position11: new Position("position11",160, 160, true, [], null),
+  position12: new Position("position12",160, 240, true, ["right"], null),
+  position13: new Position("position13",240, 0, true, ["down", "left"], null),
+  position14: new Position("position14",240, 80, true, ["down"], null),
+  position15: new Position("position15",240, 160, true, ["down"], null),
+  position16: new Position("position16",240, 240, true, ["down", "right"], null)
 })
 
 export const getters = {

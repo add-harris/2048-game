@@ -3,14 +3,16 @@
 TODO:
 
 generate new random cards - x
-calculate movement distances
-action movements
-update state of grid
+calculate movement distances - x
+action movements - x
+update state of grid - x
+
+split tile out to component
+make app fit on mobile screen size
+make app scale size across screen sizes 
 
 calculate merges
 action merges
-
-split tile out to component
 
 show tile number values
 show tile colors
@@ -31,12 +33,12 @@ $ npm install
 # serve with hot reload at localhost:3000
 $ npm run dev
 
+# run tests
+$ npm test
+
 # build for production and launch server
 $ npm run build
 $ npm run start
-
-# generate static project
-$ npm run generate
 ```
 
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).

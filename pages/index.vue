@@ -10,7 +10,7 @@
 
         <div id="grey-container">
 
-          <v-card-text>
+<!--          <v-card-text>-->
 
 
               <div class="grid-box" id="grid-background">
@@ -18,7 +18,7 @@
               </div>
 
 
-          </v-card-text>
+<!--          </v-card-text>-->
         </div>
 
           <v-card-actions>
@@ -73,7 +73,8 @@
 
     data() {
       return {
-        count: 1
+        count: 1,
+        viewFactor: 1
       }
     },
 
@@ -127,6 +128,7 @@
         if(emptyPosition) {
 
           let gridBackground = document.getElementById("grid-background");
+          let generatedId = "sliding-card-" + this.count
           let card = document.createElement("DIV");
           card.classList.add(
             "lighten-2",
@@ -135,11 +137,13 @@
             "v-sheet"
           )
 
-          card.style.top = emptyPosition.top + "px"
-          card.style.left = emptyPosition.left + "px"
-          let generatedId = "sliding-card-" + this.count
+          // scale all pixel sizes by viewFactor depending on viewport size
+          card.style.top = (emptyPosition.top * this.viewFactor) + "px"
+          card.style.left = (emptyPosition.left * this.viewFactor) + "px"
           card.id = generatedId
           gridBackground.appendChild(card)
+          card.style.height = (parseFloat(getComputedStyle(card).height) * this.viewFactor) + "px"
+          card.style.width = (parseFloat(getComputedStyle(card).width) * this.viewFactor) + "px"
 
           this.setPositionIsEmpty({"name": emptyPosition.name, "bool": false});
           this.setPositionId({"name": emptyPosition.name, "id": generatedId});
@@ -169,7 +173,7 @@
         let firstEmpty = this.getEmpty(row)[0]
         let cardId = position.id
 
-        this.slide(cardId, firstEmpty.top, firstEmpty.left)
+        this.slide(cardId, (firstEmpty.top * this.viewFactor), (firstEmpty.left * this.viewFactor))
 
         this.setPositionIsEmpty({"name": position.name, "bool": true});
         this.setPositionIsEmpty({"name": firstEmpty.name, "bool": false});
@@ -229,19 +233,19 @@
   }
 
   #grey-container {
-    margin: 10px;
-    padding: 10px;
-    height: 450px;
-    width: 450px;
+    margin: auto;
+    padding: 5px;
+    height: 330px;
+    width: 330px;
     background-color: lightgrey;
   }
 
   #grid-background {
     position: absolute;
-    height: 400px !important;
-    width: 400px;
+    height: 320px !important;
+    width: 320px;
     background-repeat: repeat;
-    background-size: 100px 100px;
+    background-size: 80px 80px;
     background-image:
       linear-gradient(to right, grey 1px, transparent 1px),
       linear-gradient(to bottom, grey 1px, transparent 1px);
@@ -249,13 +253,13 @@
 
   .sliding-card {
     position: absolute;
-    height: 90px;
-    width: 90px;
+    height: 72px;
+    width: 72px;
     margin: 5px;
     left: 0px;
     top: 0px;
     background-color: lightgrey !important;
-    transition: all 700ms;
+    transition: top 700ms, left 700ms;
   }
 
 
