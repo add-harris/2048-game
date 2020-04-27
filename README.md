@@ -8,7 +8,7 @@ action movements - x
 update state of grid - x
 
 split tile out to component
-make app fit on mobile screen size
+make app fit on mobile screen size - x
 make app scale size across screen sizes 
 
 calculate merges

@@ -2,18 +2,18 @@
 
   <v-layout column justify-center align-center>
 
-    <v-flex xs12 sm8 md6>
+    <v-flex xs12 sm12 md12>
 
       <v-card>
 
         <v-card-title class="headline">Slide</v-card-title>
 
-        <div id="grey-container">
+        <div class="grey-container grey-container-adjust">
 
 <!--          <v-card-text>-->
 
 
-              <div class="grid-box" id="grid-background">
+              <div class="grid-background grid-background-adjust" id="card-grid">
 <!--                <v-card class="lighten-2 sliding-card"></v-card>-->
               </div>
 
@@ -74,13 +74,17 @@
     data() {
       return {
         count: 1,
-        viewFactor: 1
+        viewFactor: 1.5
       }
     },
 
     computed: mapState({
       grid: state => state.grid
     }),
+
+    mounted() {
+      this.addListeners()
+    },
 
     methods: {
 
@@ -121,18 +125,35 @@
         return [this.getFirstColumn(), this.getSecondColumn(), this.getThirdColumn(), this.getForthColumn()]
       },
 
+      addListeners() {
+        window.addEventListener('resize', this.resize);
+        window.addEventListener('resize', this.resize);
+        // add key press listeners here
+
+      },
+
+      resize() {
+        console.log("resize!!")
+        console.log("resize!!")
+        console.log("resize!!")
+        // get window width
+        // if width less than 521 pixels resize all sliding cards
+        // and set viewFactor to 1
+      },
+
       generateCard() {
 
         let emptyPosition = this.getRandomEmpty()
 
         if(emptyPosition) {
 
-          let gridBackground = document.getElementById("grid-background");
+          let gridBackground = document.getElementById("card-grid");
           let generatedId = "sliding-card-" + this.count
           let card = document.createElement("DIV");
           card.classList.add(
             "lighten-2",
             "sliding-card",
+            "sliding-card-adjust",
             "v-card",
             "v-sheet"
           )
@@ -142,8 +163,8 @@
           card.style.left = (emptyPosition.left * this.viewFactor) + "px"
           card.id = generatedId
           gridBackground.appendChild(card)
-          card.style.height = (parseFloat(getComputedStyle(card).height) * this.viewFactor) + "px"
-          card.style.width = (parseFloat(getComputedStyle(card).width) * this.viewFactor) + "px"
+          // card.style.height = (parseFloat(getComputedStyle(card).height) * this.viewFactor) + "px"
+          // card.style.width = (parseFloat(getComputedStyle(card).width) * this.viewFactor) + "px"
 
           this.setPositionIsEmpty({"name": emptyPosition.name, "bool": false});
           this.setPositionId({"name": emptyPosition.name, "id": generatedId});
@@ -223,29 +244,17 @@
 
 <style>
 
-  .grid-box {
-
-    height: 400px;
-    width: 400px;
-    border-color: #35495e !important;
-    border-width: 2px !important;
-    background-color: whitesmoke !important;
-  }
-
-  #grey-container {
+  .grey-container {
     margin: auto;
     padding: 5px;
-    height: 330px;
-    width: 330px;
-    background-color: lightgrey;
+    border-radius: 2px;
+    background-color: lightgrey !important;
   }
 
-  #grid-background {
+  .grid-background {
     position: absolute;
-    height: 320px !important;
-    width: 320px;
     background-repeat: repeat;
-    background-size: 80px 80px;
+    background-color: whitesmoke;
     background-image:
       linear-gradient(to right, grey 1px, transparent 1px),
       linear-gradient(to bottom, grey 1px, transparent 1px);
@@ -253,14 +262,53 @@
 
   .sliding-card {
     position: absolute;
-    height: 72px;
-    width: 72px;
-    margin: 5px;
     left: 0px;
     top: 0px;
     background-color: lightgrey !important;
     transition: top 700ms, left 700ms;
   }
+
+  @media screen and (max-width: 520px) {
+    .grid-background-adjust {
+      height: 320px;
+      width: 320px;
+      background-size: 80px 80px;
+    }
+
+    .grey-container-adjust {
+      height: 330px;
+      width: 330px;
+    }
+
+    .sliding-card-adjust {
+      height: 72px;
+      width: 72px;
+      margin: 5px;
+    }
+  }
+
+  @media screen and (min-width: 521px) {
+    .grid-background-adjust {
+      height: 480px;
+      width: 480px;
+      background-size: 120px 120px;
+    }
+
+    .grey-container-adjust {
+      height: 490px;
+      width: 490px;
+    }
+
+    .sliding-card-adjust {
+      height: 110px;
+      width: 110px;
+      margin: 5px;
+    }
+  }
+
+
+
+
 
 
 </style>
