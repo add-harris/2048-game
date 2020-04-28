@@ -74,7 +74,7 @@
     data() {
       return {
         count: 1,
-        viewFactor: 1.5
+        viewPortRatio: 1.5
       }
     },
 
@@ -83,7 +83,7 @@
     }),
 
     mounted() {
-      this.addListeners()
+      this.setUp()
     },
 
     methods: {
@@ -125,20 +125,44 @@
         return [this.getFirstColumn(), this.getSecondColumn(), this.getThirdColumn(), this.getForthColumn()]
       },
 
-      addListeners() {
-        window.addEventListener('resize', this.resize);
-        window.addEventListener('resize', this.resize);
-        // add key press listeners here
-
+      setUp() {
+        this.addListeners()
+        this.setViewPortRatio()
       },
 
-      resize() {
-        console.log("resize!!")
-        console.log("resize!!")
-        console.log("resize!!")
-        // get window width
-        // if width less than 521 pixels resize all sliding cards
-        // and set viewFactor to 1
+      setViewPortRatio() {
+        this.viewPortRatio = window.innerWidth <= 520 ? 1 : 1.5
+        console.log("viewPortRatio set to " + this.viewPortRatio)
+      },
+
+      addListeners() {
+        window.addEventListener('resize', this.checkResize);
+        window.addEventListener('resize', this.checkResize);
+        console.log("listeners setup")
+        // add key press listeners here
+      },
+
+      checkResize() {
+        if (window.innerWidth <= 520 && this.viewPortRatio === 1.5) {
+          this.resize(1)
+        }
+        if (window.innerWidth > 520 && this.viewPortRatio === 1) {
+          this.resize(1.5)
+        }
+      },
+
+      resize(ratio) {
+        this.viewPortRatio = ratio
+        let allCards = Array.from(document.getElementsByClassName("sliding-card"))
+        let fullPositions = this.getAll().filter(position => position.isEmpty === false)
+        allCards.forEach(card => {
+          card.style.transition = "none"
+          let cardPosition = fullPositions.filter(position => position.id === card.id)[0]
+          card.style.top = (cardPosition.top * this.viewPortRatio) + "px"
+          card.style.left = (cardPosition.left * this.viewPortRatio) + "px"
+        })
+        // creates a small delay to allow element resizing to complete before restoring css transitions
+        setTimeout(function() { allCards.forEach(card => card.style.transition = "top 700ms, left 700ms") }, 300)
       },
 
       generateCard() {
@@ -147,6 +171,7 @@
 
         if(emptyPosition) {
 
+          // consider using references instead of id to find elements i.e ref="sliding-card"
           let gridBackground = document.getElementById("card-grid");
           let generatedId = "sliding-card-" + this.count
           let card = document.createElement("DIV");
@@ -158,13 +183,13 @@
             "v-sheet"
           )
 
-          // scale all pixel sizes by viewFactor depending on viewport size
-          card.style.top = (emptyPosition.top * this.viewFactor) + "px"
-          card.style.left = (emptyPosition.left * this.viewFactor) + "px"
+          // scale all pixel sizes by viewPortRatio depending on viewport size
+          card.style.top = (emptyPosition.top * this.viewPortRatio) + "px"
+          card.style.left = (emptyPosition.left * this.viewPortRatio) + "px"
           card.id = generatedId
           gridBackground.appendChild(card)
-          // card.style.height = (parseFloat(getComputedStyle(card).height) * this.viewFactor) + "px"
-          // card.style.width = (parseFloat(getComputedStyle(card).width) * this.viewFactor) + "px"
+          // card.style.height = (parseFloat(getComputedStyle(card).height) * this.viewPortRatio) + "px"
+          // card.style.width = (parseFloat(getComputedStyle(card).width) * this.viewPortRatio) + "px"
 
           this.setPositionIsEmpty({"name": emptyPosition.name, "bool": false});
           this.setPositionId({"name": emptyPosition.name, "id": generatedId});
@@ -194,7 +219,7 @@
         let firstEmpty = this.getEmpty(row)[0]
         let cardId = position.id
 
-        this.slide(cardId, (firstEmpty.top * this.viewFactor), (firstEmpty.left * this.viewFactor))
+        this.slide(cardId, (firstEmpty.top * this.viewPortRatio), (firstEmpty.left * this.viewPortRatio))
 
         this.setPositionIsEmpty({"name": position.name, "bool": true});
         this.setPositionIsEmpty({"name": firstEmpty.name, "bool": false});

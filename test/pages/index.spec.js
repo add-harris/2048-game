@@ -18,6 +18,8 @@ describe('Pages / index.vue', () => {
   let store
   let wrapper
 
+  const defaultInnerWidth = global.innerWidth
+
   // test variables
   let position1 = new Position("position1", 0, 0, true, ["up"], null)
   let position2 = new Position("position2", 100, 100, false, ["down"], "some-id-1")
@@ -83,14 +85,23 @@ describe('Pages / index.vue', () => {
     return dummyCard
   }
 
-  // hooks
-  beforeEach(async () => {
+  function destroyWrapper() {
+    wrapper.destroy()
+  }
+
+  function createWrapper() {
     store = createStore()
     wrapper = mount(index, {attachToDocument: true, localVue, store})
+  }
+
+  // hooks
+  beforeEach(async () => {
+    createWrapper()
   })
 
   afterEach(async () => {
-    wrapper.destroy()
+    destroyWrapper()
+    global.innerWidth = defaultInnerWidth
   })
 
 
@@ -142,7 +153,7 @@ describe('Pages / index.vue', () => {
   })
 
   test('slide() - updates position values of target', () => {
-    wrapper.element.querySelector("#grid-background")
+    wrapper.element.querySelector("#card-grid")
       .appendChild(createDummyCard())
 
     wrapper.vm.slide("dummy-card", 110, 120)
@@ -269,5 +280,53 @@ describe('Pages / index.vue', () => {
     expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(3, position2, row, "left")
     expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(4, position4, row, "left")
   })
+
+  test('setViewPortRatio() - sets ratio to 1 for screen sizes 520 pixels and under', () => {
+    global.innerWidth = 519
+    destroyWrapper()
+    createWrapper()
+    expect(wrapper.vm.viewPortRatio).toBe(1)
+  })
+
+  test('setViewPortRatio() - sets ratio to 1.5 for screen sizes over 520 pixels', () => {
+    global.innerWidth = 521
+    destroyWrapper()
+    createWrapper()
+    expect(wrapper.vm.viewPortRatio).toBe(1.5)
+  })
+
+  test('checkResize() - trigger elements resize if screensize is below 520 & view ratio is 1.5', () => {
+    global.innerWidth = 519
+    wrapper.vm.viewPortRatio = 1.5
+    wrapper.vm.resize = jest.fn()
+    wrapper.vm.checkResize()
+    expect(wrapper.vm.resize).toHaveBeenCalledWith(1)
+  })
+
+  test('checkResize() - do nothing if screensize is below 520 & but ratio is already 1', () => {
+    global.innerWidth = 519
+    wrapper.vm.viewPortRatio = 1
+    wrapper.vm.resize = jest.fn()
+    wrapper.vm.checkResize()
+    expect(wrapper.vm.resize).not.toHaveBeenCalled()
+  })
+
+  test('checkResize() - trigger elements resize if screensize is over 520 & view ratio is 1', () => {
+    global.innerWidth = 521
+    wrapper.vm.viewPortRatio = 1
+    wrapper.vm.resize = jest.fn()
+    wrapper.vm.checkResize()
+    expect(wrapper.vm.resize).toHaveBeenCalledWith(1.5)
+  })
+
+  test('checkResize() - do nothing if screensize is over 520 & but ratio is already 1.5', () => {
+    global.innerWidth = 521
+    wrapper.vm.viewPortRatio = 1.5
+    wrapper.vm.resize = jest.fn()
+    wrapper.vm.checkResize()
+    expect(wrapper.vm.resize).not.toHaveBeenCalled()
+  })
+
+
 
 })
