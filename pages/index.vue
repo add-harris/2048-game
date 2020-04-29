@@ -132,13 +132,10 @@
 
       setViewPortRatio() {
         this.viewPortRatio = window.innerWidth <= 520 ? 1 : 1.5
-        console.log("viewPortRatio set to " + this.viewPortRatio)
       },
 
       addListeners() {
         window.addEventListener('resize', this.checkResize);
-        window.addEventListener('resize', this.checkResize);
-        console.log("listeners setup")
         // add key press listeners here
       },
 

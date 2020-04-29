@@ -327,6 +327,35 @@ describe('Pages / index.vue', () => {
     expect(wrapper.vm.resize).not.toHaveBeenCalled()
   })
 
+  test('addListeners() - sets up resize event listener',  () => {
+    const storeFunction = window.addEventListener
+    window.addEventListener = jest.fn()
+    wrapper.vm.addListeners()
+    expect(window.addEventListener).toHaveBeenCalledTimes(1)
+    expect(window.addEventListener).toHaveBeenCalledWith('resize', expect.anything())
+    window.addEventListener = storeFunction
+  })
+
+  test('setUp() - sets up event listeners & sets viewport ratio', () => {
+    wrapper.vm.addListeners = jest.fn()
+    wrapper.vm.setViewPortRatio = jest.fn()
+    wrapper.vm.setUp()
+    expect(wrapper.vm.addListeners).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.setViewPortRatio).toHaveBeenCalledTimes(1)
+  })
+
+  test( 'mounted - calls setUp on mount', async () => {
+    destroyWrapper()
+    // for spying on mounted methods - https://github.com/vuejs/vue-test-utils/issues/148
+    const setUp = jest.spyOn(index.methods, 'setUp')
+    createWrapper()
+    expect(setUp).toBeCalled()
+  })
+
+  test('resize() - ', () => {
+
+  })
+
 
 
 })
