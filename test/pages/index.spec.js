@@ -77,9 +77,9 @@ describe('Pages / index.vue', () => {
     return new Vuex.Store({ getters, mutations })
   }
 
-  function createDummyCard() {
+  function createDummyCard(id = "dummy-card") {
     let dummyCard = document.createElement("DIV")
-    dummyCard.id = "dummy-card"
+    dummyCard.id = id
     dummyCard.top = "0px"
     dummyCard.left = "0px"
     return dummyCard
@@ -153,7 +153,7 @@ describe('Pages / index.vue', () => {
   })
 
   test('slide() - updates position values of target', () => {
-    wrapper.element.querySelector("#card-grid")
+    wrapper.element.querySelector(".grid-background")
       .appendChild(createDummyCard())
 
     wrapper.vm.slide("dummy-card", 110, 120)
@@ -328,12 +328,12 @@ describe('Pages / index.vue', () => {
   })
 
   test('addListeners() - sets up resize event listener',  () => {
-    const storeFunction = window.addEventListener
+    const originalImpl = window.addEventListener
     window.addEventListener = jest.fn()
     wrapper.vm.addListeners()
     expect(window.addEventListener).toHaveBeenCalledTimes(1)
     expect(window.addEventListener).toHaveBeenCalledWith('resize', expect.anything())
-    window.addEventListener = storeFunction
+    window.addEventListener = originalImpl
   })
 
   test('setUp() - sets up event listeners & sets viewport ratio', () => {
@@ -353,7 +353,13 @@ describe('Pages / index.vue', () => {
   })
 
   test('resize() - ', () => {
+    const originalImpl = document.getElementsByClassName
+    document.getElementsByClassName = jest.fn(() => [createDummyCard("some-id-1"), createDummyCard("some-id-2")])
 
+    wrapper.vm.resize(1)
+    expect(mockGetAll).toHaveBeenCalledTimes(1)
+
+    document.getElementsByClassName = originalImpl
   })
 
 

@@ -10,15 +10,12 @@
 
         <div class="grey-container grey-container-adjust">
 
-<!--          <v-card-text>-->
 
-
-              <div class="grid-background grid-background-adjust" id="card-grid">
+              <div class="grid-background grid-background-adjust" ref="card-grid">
 <!--                <v-card class="lighten-2 sliding-card"></v-card>-->
               </div>
 
 
-<!--          </v-card-text>-->
         </div>
 
           <v-card-actions>
@@ -43,7 +40,6 @@
               <v-row>
                 <div style="margin: 10px">
 
-                  <v-btn color="primary" @click="printGrid()">print</v-btn>
                   <v-btn color="primary" @click="generateCard()">create</v-btn>
 
                 </div>
@@ -105,10 +101,6 @@
         setPositionId: 'grid/setPositionId'
       }),
 
-      printGrid() {
-        this.calculateMovement("right")
-      },
-
       getEmpty(arr) {
         return arr.filter(position => position.isEmpty === true)
       },
@@ -168,8 +160,7 @@
 
         if(emptyPosition) {
 
-          // consider using references instead of id to find elements i.e ref="sliding-card"
-          let gridBackground = document.getElementById("card-grid");
+          let gridBackground = this.$refs['card-grid'];
           let generatedId = "sliding-card-" + this.count
           let card = document.createElement("DIV");
           card.classList.add(
@@ -185,8 +176,6 @@
           card.style.left = (emptyPosition.left * this.viewPortRatio) + "px"
           card.id = generatedId
           gridBackground.appendChild(card)
-          // card.style.height = (parseFloat(getComputedStyle(card).height) * this.viewPortRatio) + "px"
-          // card.style.width = (parseFloat(getComputedStyle(card).width) * this.viewPortRatio) + "px"
 
           this.setPositionIsEmpty({"name": emptyPosition.name, "bool": false});
           this.setPositionId({"name": emptyPosition.name, "id": generatedId});
