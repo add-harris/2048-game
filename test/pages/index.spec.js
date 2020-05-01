@@ -352,15 +352,66 @@ describe('Pages / index.vue', () => {
     expect(setUp).toBeCalled()
   })
 
-  test('resize() - ', () => {
-    const originalImpl = document.getElementsByClassName
-    document.getElementsByClassName = jest.fn(() => [createDummyCard("some-id-1"), createDummyCard("some-id-2")])
-
+  // this is a bad of test of some bad javascript
+  test('resize() - sets viewPortRatio to input (and do nothing if no cards to resize)', () => {
+    mockGetAll = jest.fn(() => [])
     wrapper.vm.resize(1)
-    expect(mockGetAll).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.viewPortRatio).toBe(1)
+  })
+
+  test('resize() - resizes card elements based on viewPortRatio', () => {
+    const originalImpl = document.getElementsByClassName
+
+    let card1 = createDummyCard("some-id-1")
+    let card2 = createDummyCard("some-id-2")
+
+    document.getElementsByClassName = jest.fn(() => [card1, card2])
+
+    wrapper.vm.resize(2)
+    expect(wrapper.vm.viewPortRatio).toBe(2)
+    expect(card1.style.top).toBe("200px")
+    expect(card1.style.left).toBe("200px")
+    expect(card2.style.top).toBe("600px")
+    expect(card2.style.left).toBe("600px")
 
     document.getElementsByClassName = originalImpl
   })
+
+  test('resize() - temporarily disable transition animation for card elements to allow resize to happen', () => {
+    const originalImpl = document.getElementsByClassName
+    // mocks native setTimeout
+    jest.useFakeTimers();
+
+    let card1 = createDummyCard("some-id-1")
+    let card2 = createDummyCard("some-id-2")
+
+    document.getElementsByClassName = jest.fn(() => [card1, card2])
+
+    wrapper.vm.resize(1)
+    expect(card1.style.transition).toBe("none")
+    expect(card2.style.transition).toBe("none")
+
+    document.getElementsByClassName = originalImpl
+  })
+
+  test('resize() - reinstate transition animation for card elements to after resize complete', () => {
+    const originalImpl = document.getElementsByClassName
+    jest.useFakeTimers();
+
+    let card1 = createDummyCard("some-id-1")
+    let card2 = createDummyCard("some-id-2")
+
+    document.getElementsByClassName = jest.fn(() => [card1, card2])
+
+    wrapper.vm.resize(1)
+    // runs native setTimeout to zero
+    jest.runAllTimers();
+    expect(card1.style.transition).toBe("top 700ms, left 700ms")
+    expect(card2.style.transition).toBe("top 700ms, left 700ms")
+
+    document.getElementsByClassName = originalImpl
+  })
+
 
 
 
