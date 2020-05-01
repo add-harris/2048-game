@@ -34,6 +34,9 @@
                   <v-btn color="primary" @click="calculateMovement('right')">Slide Right</v-btn>
                   <v-btn color="primary" @click="calculateMovement('down')">Slide Down</v-btn>
 
+<!--                  unable to get vue html based event listeners to work so used traditional js-->
+<!--                  <input value="input" type="button" :keyup.space="print()" >-->
+<!--                  <input value="input" type="button" :keyup.enter="print()" >-->
 
                 </div>
               </v-row>
@@ -128,7 +131,7 @@
 
       addListeners() {
         window.addEventListener('resize', this.checkResize);
-        // add key press listeners here
+        window.addEventListener("keyup", this.checkKeyPress);
       },
 
       checkResize() {
@@ -137,6 +140,23 @@
         }
         if (window.innerWidth > 520 && this.viewPortRatio === 1) {
           this.resize(1.5)
+        }
+      },
+
+      checkKeyPress(e) {
+        switch (e.key) {
+          case 'ArrowLeft':
+            this.calculateMovement('left')
+            break;
+          case 'ArrowUp':
+            this.calculateMovement('up')
+            break;
+          case 'ArrowRight':
+            this.calculateMovement('right')
+            break;
+          case 'ArrowDown':
+            this.calculateMovement('down')
+            break;
         }
       },
 

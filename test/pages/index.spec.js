@@ -331,8 +331,17 @@ describe('Pages / index.vue', () => {
     const originalImpl = window.addEventListener
     window.addEventListener = jest.fn()
     wrapper.vm.addListeners()
-    expect(window.addEventListener).toHaveBeenCalledTimes(1)
+    expect(window.addEventListener).toHaveBeenCalledTimes(2)
     expect(window.addEventListener).toHaveBeenCalledWith('resize', expect.anything())
+    window.addEventListener = originalImpl
+  })
+
+  test('addListeners() - sets up keyup event listener',  () => {
+    const originalImpl = window.addEventListener
+    window.addEventListener = jest.fn()
+    wrapper.vm.addListeners()
+    expect(window.addEventListener).toHaveBeenCalledTimes(2)
+    expect(window.addEventListener).toHaveBeenCalledWith('keyup', expect.anything())
     window.addEventListener = originalImpl
   })
 
@@ -410,6 +419,38 @@ describe('Pages / index.vue', () => {
     expect(card2.style.transition).toBe("top 700ms, left 700ms")
 
     document.getElementsByClassName = originalImpl
+  })
+
+  test('checkKeyPress() - triggers movement in upward direction on key press', () => {
+    let event = new KeyboardEvent('keyup', {'key' : 'ArrowUp'})
+    wrapper.vm.calculateMovement = jest.fn()
+    wrapper.vm.checkKeyPress(event)
+    expect(wrapper.vm.calculateMovement).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.calculateMovement).toHaveBeenCalledWith('up')
+  })
+
+  test('checkKeyPress() - triggers movement in downward direction on key press', () => {
+    let event = new KeyboardEvent('keyup', {'key' : 'ArrowDown'})
+    wrapper.vm.calculateMovement = jest.fn()
+    wrapper.vm.checkKeyPress(event)
+    expect(wrapper.vm.calculateMovement).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.calculateMovement).toHaveBeenCalledWith('down')
+  })
+
+  test('checkKeyPress() - triggers movement in left direction on key press', () => {
+    let event = new KeyboardEvent('keyup', {'key' : 'ArrowLeft'})
+    wrapper.vm.calculateMovement = jest.fn()
+    wrapper.vm.checkKeyPress(event)
+    expect(wrapper.vm.calculateMovement).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.calculateMovement).toHaveBeenCalledWith('left')
+  })
+
+  test('checkKeyPress() - triggers movement in right direction on key press', () => {
+    let event = new KeyboardEvent('keyup', {'key' : 'ArrowRight'})
+    wrapper.vm.calculateMovement = jest.fn()
+    wrapper.vm.checkKeyPress(event)
+    expect(wrapper.vm.calculateMovement).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.calculateMovement).toHaveBeenCalledWith('right')
   })
 
 

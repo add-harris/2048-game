@@ -7,13 +7,13 @@ calculate movement distances - x
 action movements - x
 update state of grid - x
 
-split tile out to component
 make app fit on mobile screen size - x
-make app scale size across screen sizes 
+make app scale size across screen sizes - x
 
 calculate merges
 action merges
 
+split tile out to component
 show tile number values
 show tile colors
 randomly generate appropriate tile value
