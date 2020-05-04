@@ -16,7 +16,10 @@ export const state = () => ({
   position13: new Position("position13",240, 0, true, ["down", "left"], null),
   position14: new Position("position14",240, 80, true, ["down"], null),
   position15: new Position("position15",240, 160, true, ["down"], null),
-  position16: new Position("position16",240, 240, true, ["down", "right"], null)
+  position16: new Position("position16",240, 240, true, ["down", "right"], null),
+
+  cards: {}
+
 })
 
 export const getters = {

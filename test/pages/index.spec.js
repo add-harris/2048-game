@@ -140,16 +140,28 @@ describe('Pages / index.vue', () => {
   })
 
 
-  test('generateCard() - creates a new card element', () => {
+  test('generateCard() - do nothing if no empty spaces left', () => {
+    wrapper.vm.getRandomEmpty = jest.fn()
     wrapper.vm.generateCard()
-    expect(wrapper.get("#sliding-card-1"))
-    expect(mockSetPositionIsEmpty).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.getRandomEmpty).toHaveBeenCalledTimes(1)
+    expect(mockSetPositionIsEmpty).not.toBeCalled()
+    expect(mockSetPositionId).not.toBeCalled()
   })
 
-  test('generateCard() - updates the store', () => {
+  test('generateCard() - updates card data', () => {
+    expect(wrapper.vm.cards).toBe({})
     wrapper.vm.generateCard()
     expect(mockSetPositionIsEmpty).toHaveBeenCalledTimes(1)
     expect(mockSetPositionId).toHaveBeenCalledTimes(1)
+  })
+
+  test('generateCard() - updates the store', () => {
+    wrapper.vm.getRandomEmpty = jest.fn(() => position2)
+    wrapper.vm.generateCard()
+    expect(mockSetPositionIsEmpty).toHaveBeenCalledTimes(1)
+    expect(mockSetPositionIsEmpty).toHaveBeenCalledWith(expect.anything(), {"name": "position2", "bool": false})
+    expect(mockSetPositionId).toHaveBeenCalledTimes(1)
+    expect(mockSetPositionIsEmpty).toHaveBeenCalledWith(expect.anything(), {"name": "position2", "id": "cardRef1"})
   })
 
   test('slide() - updates position values of target', () => {
@@ -361,64 +373,27 @@ describe('Pages / index.vue', () => {
     expect(setUp).toBeCalled()
   })
 
-  // this is a bad of test of some bad javascript
-  test('resize() - sets viewPortRatio to input (and do nothing if no cards to resize)', () => {
-    mockGetAll = jest.fn(() => [])
+  test('resize() - changes viewPortRatio to input', () => {
     wrapper.vm.resize(1)
     expect(wrapper.vm.viewPortRatio).toBe(1)
   })
 
-  test('resize() - resizes card elements based on viewPortRatio', () => {
-    const originalImpl = document.getElementsByClassName
-
-    let card1 = createDummyCard("some-id-1")
-    let card2 = createDummyCard("some-id-2")
-
-    document.getElementsByClassName = jest.fn(() => [card1, card2])
-
+  test('resize() - temporarily turns off card transitions', () => {
+    wrapper.vm.setCardTransitions = jest.fn()
     wrapper.vm.resize(2)
-    expect(wrapper.vm.viewPortRatio).toBe(2)
-    expect(card1.style.top).toBe("200px")
-    expect(card1.style.left).toBe("200px")
-    expect(card2.style.top).toBe("600px")
-    expect(card2.style.left).toBe("600px")
-
-    document.getElementsByClassName = originalImpl
+    expect(wrapper.vm.setCardTransitions).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.setCardTransitions).toHaveBeenNthCalledWith(1, false)
   })
 
   test('resize() - temporarily disable transition animation for card elements to allow resize to happen', () => {
-    const originalImpl = document.getElementsByClassName
     // mocks native setTimeout
     jest.useFakeTimers();
-
-    let card1 = createDummyCard("some-id-1")
-    let card2 = createDummyCard("some-id-2")
-
-    document.getElementsByClassName = jest.fn(() => [card1, card2])
-
-    wrapper.vm.resize(1)
-    expect(card1.style.transition).toBe("none")
-    expect(card2.style.transition).toBe("none")
-
-    document.getElementsByClassName = originalImpl
-  })
-
-  test('resize() - reinstate transition animation for card elements to after resize complete', () => {
-    const originalImpl = document.getElementsByClassName
-    jest.useFakeTimers();
-
-    let card1 = createDummyCard("some-id-1")
-    let card2 = createDummyCard("some-id-2")
-
-    document.getElementsByClassName = jest.fn(() => [card1, card2])
-
+    wrapper.vm.setCardTransitions = jest.fn()
     wrapper.vm.resize(1)
     // runs native setTimeout to zero
     jest.runAllTimers();
-    expect(card1.style.transition).toBe("top 700ms, left 700ms")
-    expect(card2.style.transition).toBe("top 700ms, left 700ms")
-
-    document.getElementsByClassName = originalImpl
+    expect(wrapper.vm.setCardTransitions).toHaveBeenCalledTimes(2)
+    expect(wrapper.vm.setCardTransitions).toHaveBeenNthCalledWith(2, true)
   })
 
   test('checkKeyPress() - triggers movement in upward direction on key press', () => {
@@ -452,8 +427,6 @@ describe('Pages / index.vue', () => {
     expect(wrapper.vm.calculateMovement).toHaveBeenCalledTimes(1)
     expect(wrapper.vm.calculateMovement).toHaveBeenCalledWith('right')
   })
-
-
 
 
 })

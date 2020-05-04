@@ -12,7 +12,13 @@
 
 
               <div class="grid-background grid-background-adjust" ref="card-grid">
-<!--                <v-card class="lighten-2 sliding-card"></v-card>-->
+                <Card v-for="(card, key) in cards"
+                      :key="key"
+                      :init-top="card.top"
+                      :init-left="card.left"
+                      :view-port-ratio="viewPortRatio"
+                      :transition-enabled="card.transitionEnabled"
+                ></Card>
               </div>
 
 
@@ -64,21 +70,35 @@
 
 
   import { Position } from '../utils/Position'
+  import Card from '../components/Card'
   import { mapState, mapGetters, mapMutations} from 'vuex'
   import _ from 'lodash'
 
 
   export default {
 
+    components: {
+      Card
+    },
+
     data() {
       return {
         count: 1,
-        viewPortRatio: 1.5
+        viewPortRatio: 1.5,
+        cards: {
+          // props pattern :
+          // cardRef1: { top: 0, left:0, transitionEnabled: true},
+          // cardRef2: { top: 0, left:80 },
+          // cardRef3: { top: 0, left:160 },
+          // cardRef4: { top: 0, left:240 },
+        }
+
       }
     },
 
     computed: mapState({
       grid: state => state.grid
+      // can access whole state with this.grid, though may not be a good idea
     }),
 
     mounted() {
@@ -131,7 +151,7 @@
 
       addListeners() {
         window.addEventListener('resize', this.checkResize);
-        window.addEventListener("keyup", this.checkKeyPress);
+        window.addEventListener('keyup', this.checkKeyPress);
       },
 
       checkResize() {
@@ -141,6 +161,13 @@
         if (window.innerWidth > 520 && this.viewPortRatio === 1) {
           this.resize(1.5)
         }
+      },
+
+      resize(ratio) {
+        this.setCardTransitions(false)
+        this.viewPortRatio = ratio
+        // creates a small delay to allow element resizing to complete before restoring css transitions
+        setTimeout(() => this.setCardTransitions(true), 300)
       },
 
       checkKeyPress(e) {
@@ -160,18 +187,10 @@
         }
       },
 
-      resize(ratio) {
-        this.viewPortRatio = ratio
-        let allCards = Array.from(document.getElementsByClassName("sliding-card"))
-        let fullPositions = this.getAll().filter(position => position.isEmpty === false)
-        allCards.forEach(card => {
-          card.style.transition = "none"
-          let cardPosition = fullPositions.filter(position => position.id === card.id)[0]
-          card.style.top = (cardPosition.top * this.viewPortRatio) + "px"
-          card.style.left = (cardPosition.left * this.viewPortRatio) + "px"
-        })
-        // creates a small delay to allow element resizing to complete before restoring css transitions
-        setTimeout(function() { allCards.forEach(card => card.style.transition = "top 700ms, left 700ms") }, 300)
+      setCardTransitions(boolean) {
+        for (let card in this.cards) {
+          this.$set(this.cards[card], 'transitionEnabled', boolean)
+        }
       },
 
       generateCard() {
@@ -180,58 +199,26 @@
 
         if(emptyPosition) {
 
-          let gridBackground = this.$refs['card-grid'];
-          let generatedId = "sliding-card-" + this.count
-          let card = document.createElement("DIV");
-          card.classList.add(
-            "lighten-2",
-            "sliding-card",
-            "sliding-card-adjust",
-            "v-card",
-            "v-sheet"
-          )
+          let cardRef = "cardRef" + this.count
 
-          // scale all pixel sizes by viewPortRatio depending on viewport size
-          card.style.top = (emptyPosition.top * this.viewPortRatio) + "px"
-          card.style.left = (emptyPosition.left * this.viewPortRatio) + "px"
-          card.id = generatedId
-          gridBackground.appendChild(card)
+          let cardProps = {
+            top: emptyPosition.top,
+            left: emptyPosition.left,
+            transitionEnabled: true
+          }
+
+          this.$set(this.cards, cardRef, cardProps)
 
           this.setPositionIsEmpty({"name": emptyPosition.name, "bool": false});
-          this.setPositionId({"name": emptyPosition.name, "id": generatedId});
+          this.setPositionId({"name": emptyPosition.name, "id": cardRef});
           this.count++
         }
       },
 
-      slide(cardId, top, left) {
-        let card = document.getElementById(cardId);
-        card.style.top = top + 'px'
-        card.style.left = left + 'px'
-      },
-
-      canMove(position, row, direction) {
-
-        if (position.edge.includes(direction)) {
-          return false;
-        }
-        let nextPostion = row[ row.indexOf(position) - 1 ]
-
-        return nextPostion.isEmpty
-
-      },
-
-      shuffleUp(position, row) {
-
-        let firstEmpty = this.getEmpty(row)[0]
-        let cardId = position.id
-
-        this.slide(cardId, (firstEmpty.top * this.viewPortRatio), (firstEmpty.left * this.viewPortRatio))
-
-        this.setPositionIsEmpty({"name": position.name, "bool": true});
-        this.setPositionIsEmpty({"name": firstEmpty.name, "bool": false});
-        this.setPositionId({"name": position.name, "id": null});
-        this.setPositionId({"name": firstEmpty.name, "id": cardId});
-
+      // TODO move cards to store instead of data
+      slide(cardRef, top, left) {
+        this.$set(this.cards[cardRef], 'top', top)
+        this.$set(this.cards[cardRef], 'left', left)
       },
 
       getRowsToMove(direction) {
@@ -247,6 +234,37 @@
         }
       },
 
+      canMove(position, row, direction) {
+
+        if (position.edge.includes(direction)) {
+          return false;
+        }
+        let nextPosition = row[ row.indexOf(position) - 1 ]
+
+        return nextPosition.isEmpty
+
+      },
+
+      // TODO change id in the store to ref
+      shuffleUp(position, row) {
+
+        let firstEmpty = this.getEmpty(row)[0]
+        let cardRef = position.id
+
+        this.slide(cardRef, firstEmpty.top, firstEmpty.left)
+
+        this.setPositionIsEmpty({"name": position.name, "bool": true});
+        this.setPositionIsEmpty({"name": firstEmpty.name, "bool": false});
+        this.setPositionId({"name": position.name, "id": null});
+        this.setPositionId({"name": firstEmpty.name, "id": cardRef});
+
+      },
+
+      canMerge(position, row) {
+
+
+      },
+
       calculateMovement(direction) {
 
         // get all rows or columns based on direction
@@ -260,7 +278,8 @@
               let canActuallyMove = this.canMove(position, row, direction)
 
               if (canActuallyMove) {
-                this.shuffleUp(position, row, direction)
+                this.shuffleUp(position, row)
+                this.canMerge(position, row)
               }
             }
           })
@@ -291,14 +310,6 @@
       linear-gradient(to bottom, grey 1px, transparent 1px);
   }
 
-  .sliding-card {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    background-color: lightgrey !important;
-    transition: top 700ms, left 700ms;
-  }
-
   @media screen and (max-width: 520px) {
     .grid-background-adjust {
       height: 320px;
@@ -309,12 +320,6 @@
     .grey-container-adjust {
       height: 330px;
       width: 330px;
-    }
-
-    .sliding-card-adjust {
-      height: 72px;
-      width: 72px;
-      margin: 5px;
     }
   }
 
@@ -328,12 +333,6 @@
     .grey-container-adjust {
       height: 490px;
       width: 490px;
-    }
-
-    .sliding-card-adjust {
-      height: 110px;
-      width: 110px;
-      margin: 5px;
     }
   }
 
