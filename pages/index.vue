@@ -97,8 +97,17 @@
     },
 
     computed: mapState({
-      grid: state => state.grid
+      grid: state => state.grid,
       // can access whole state with this.grid, though may not be a good idea
+
+      // to store state across multiple pages
+      // this does work & load cards when the exist in the store, but then breaks further cards being made
+      // is also a hacky way of updating cards data (should use $set)
+      // if used a flag should be set in the store to run it once when returning to the page, reload tiles, then turn it back off
+      // mapCards: async function (state) {
+      //   this.cards = state.grid.storedCards
+      //   await this.$nextTick()
+      // }
     }),
 
     mounted() {
@@ -116,12 +125,14 @@
         getSecondColumn:  'grid/getSecondColumn',
         getThirdColumn:   'grid/getThirdColumn',
         getForthColumn:   'grid/getForthColumn',
-        getAll:           'grid/getAll'
+        getAll:           'grid/getAll',
+        // getStoredCards:   'grid/getStoredCards'
       }),
 
       ...mapMutations({
         setPositionIsEmpty: 'grid/setPositionIsEmpty',
-        setPositionId: 'grid/setPositionId'
+        setPositionRef: 'grid/setPositionRef',
+        setCardData: 'grid/setCardData'
       }),
 
       getEmpty(arr) {
@@ -207,10 +218,14 @@
             transitionEnabled: true
           }
 
+          // update the store - not used for now
+          // this.setCardData({"ref": cardRef, "props": cardProps})
+
+          // update local data
           this.$set(this.cards, cardRef, cardProps)
 
           this.setPositionIsEmpty({"name": emptyPosition.name, "bool": false});
-          this.setPositionId({"name": emptyPosition.name, "id": cardRef});
+          this.setPositionRef({"name": emptyPosition.name, "ref": cardRef});
           this.count++
         }
       },
@@ -249,14 +264,14 @@
       shuffleUp(position, row) {
 
         let firstEmpty = this.getEmpty(row)[0]
-        let cardRef = position.id
+        let cardRef = position.ref
 
         this.slide(cardRef, firstEmpty.top, firstEmpty.left)
 
         this.setPositionIsEmpty({"name": position.name, "bool": true});
         this.setPositionIsEmpty({"name": firstEmpty.name, "bool": false});
-        this.setPositionId({"name": position.name, "id": null});
-        this.setPositionId({"name": firstEmpty.name, "id": cardRef});
+        this.setPositionRef({"name": position.name, "ref": null});
+        this.setPositionRef({"name": firstEmpty.name, "ref": cardRef});
 
       },
 

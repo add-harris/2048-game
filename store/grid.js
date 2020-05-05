@@ -18,7 +18,9 @@ export const state = () => ({
   position15: new Position("position15",240, 160, true, ["down"], null),
   position16: new Position("position16",240, 240, true, ["down", "right"], null),
 
-  cards: {}
+  storedCards: {
+    // cardRef1: { top: 0, left:0, transitionEnabled: true}
+  }
 
 })
 
@@ -52,6 +54,9 @@ export const getters = {
             state.position5, state.position6, state.position7, state.position8,
             state.position9, state.position10, state.position11, state.position12,
             state.position13, state.position14, state.position15, state.position16]
+  },
+  getStoredCards (state) {
+    return state.storedCards
   }
 }
 
@@ -60,8 +65,11 @@ export const mutations = {
   setPositionIsEmpty (state, obj) {
     state[obj.name].isEmpty = obj.bool
   },
-  setPositionId (state, obj) {
-    state[obj.name].id = obj.id
+  setPositionRef (state, obj) {
+    state[obj.name].ref = obj.ref
+  },
+  setCardData (state, obj) {
+    state.storedCards[obj.ref] = obj.props
   }
 }
 
