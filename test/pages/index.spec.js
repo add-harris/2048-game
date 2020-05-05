@@ -18,15 +18,23 @@ describe('Pages / index.vue', () => {
   let store
   let wrapper
 
-  const defaultInnerWidth = global.innerWidth
 
   // test variables
   let position1 = new Position("position1", 0, 0, true, ["up"], null)
-  let position2 = new Position("position2", 100, 100, false, ["down"], "some-id-1")
+  let position2 = new Position("position2", 100, 100, false, ["down"], "some-ref-1")
   let position3 = new Position("position3", 200, 200, true, ["left"], null)
-  let position4 = new Position("position4", 300, 300, false, ["right"], "some-id-2")
+  let position4 = new Position("position4", 300, 300, false, ["right"], "some-ref-2")
 
   let row = [position1, position2, position3, position4]
+
+  let cardData = { "cardRef1" : {
+      top: 100,
+      left: 100,
+      transitionEnabled: true
+    }
+  }
+
+  const defaultInnerWidth = global.innerWidth
 
   // test helpers
   let mockGetFirstRow
@@ -40,7 +48,7 @@ describe('Pages / index.vue', () => {
   let mockGetAll
 
   let mockSetPositionIsEmpty
-  let mockSetPositionId
+  let mockSetPositionRef
 
   function createStore() {
 
@@ -67,22 +75,14 @@ describe('Pages / index.vue', () => {
     }
 
     mockSetPositionIsEmpty = jest.fn()
-    mockSetPositionId = jest.fn()
+    mockSetPositionRef = jest.fn()
 
     let mutations = {
       "grid/setPositionIsEmpty": mockSetPositionIsEmpty,
-      "grid/setPositionId": mockSetPositionId
+      "grid/setPositionRef": mockSetPositionRef
     }
 
     return new Vuex.Store({ getters, mutations })
-  }
-
-  function createDummyCard(id = "dummy-card") {
-    let dummyCard = document.createElement("DIV")
-    dummyCard.id = id
-    dummyCard.top = "0px"
-    dummyCard.left = "0px"
-    return dummyCard
   }
 
   function destroyWrapper() {
@@ -145,14 +145,14 @@ describe('Pages / index.vue', () => {
     wrapper.vm.generateCard()
     expect(wrapper.vm.getRandomEmpty).toHaveBeenCalledTimes(1)
     expect(mockSetPositionIsEmpty).not.toBeCalled()
-    expect(mockSetPositionId).not.toBeCalled()
+    expect(mockSetPositionRef).not.toBeCalled()
   })
 
   test('generateCard() - updates card data', () => {
-    expect(wrapper.vm.cards).toBe({})
+    wrapper.vm.getRandomEmpty = jest.fn(() => position2)
+    expect(wrapper.vm.cards).toEqual({})
     wrapper.vm.generateCard()
-    expect(mockSetPositionIsEmpty).toHaveBeenCalledTimes(1)
-    expect(mockSetPositionId).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.cards).toEqual(cardData)
   })
 
   test('generateCard() - updates the store', () => {
@@ -160,17 +160,16 @@ describe('Pages / index.vue', () => {
     wrapper.vm.generateCard()
     expect(mockSetPositionIsEmpty).toHaveBeenCalledTimes(1)
     expect(mockSetPositionIsEmpty).toHaveBeenCalledWith(expect.anything(), {"name": "position2", "bool": false})
-    expect(mockSetPositionId).toHaveBeenCalledTimes(1)
-    expect(mockSetPositionIsEmpty).toHaveBeenCalledWith(expect.anything(), {"name": "position2", "id": "cardRef1"})
+    expect(mockSetPositionRef).toHaveBeenCalledTimes(1)
+    expect(mockSetPositionRef).toHaveBeenCalledWith(expect.anything(), {"name": "position2", "ref": "cardRef1"})
   })
 
-  test('slide() - updates position values of target', () => {
-    wrapper.element.querySelector(".grid-background")
-      .appendChild(createDummyCard())
-
-    wrapper.vm.slide("dummy-card", 110, 120)
-    expect(wrapper.find("#dummy-card").attributes().style).toContain("top: 110px")
-    expect(wrapper.find("#dummy-card").attributes().style).toContain("left: 120px")
+  test('slide() - updates card data with new position values', () => {
+    wrapper.setData({ cards: cardData})
+    wrapper.vm.slide("cardRef1", 110, 120)
+    expect(wrapper.vm.cards["cardRef1"].top).toBe(110)
+    expect(wrapper.vm.cards["cardRef1"].left).toBe(120)
+    expect(wrapper.vm.cards["cardRef1"].transitionEnabled).toBeTruthy()
   })
 
   test('canMove() - return false if position is already at the edge', () => {
@@ -196,7 +195,7 @@ describe('Pages / index.vue', () => {
     // replace function with a mock & provide return value or mock implementation
     wrapper.vm.getEmpty = jest.fn(() => [position1])
     wrapper.vm.shuffleUp(position2, row)
-    expect(wrapper.vm.slide).toBeCalledWith(position2.id, position1.top, position1.left)
+    expect(wrapper.vm.slide).toBeCalledWith(position2.ref, position1.top, position1.left)
 
   })
 
@@ -207,10 +206,10 @@ describe('Pages / index.vue', () => {
     wrapper.vm.getEmpty = jest.fn(() => [position1])
     wrapper.vm.shuffleUp(position2, row)
     expect(mockSetPositionIsEmpty).toHaveBeenCalledTimes(2)
-    expect(mockSetPositionId).toHaveBeenCalledTimes(2)
+    expect(mockSetPositionRef).toHaveBeenCalledTimes(2)
     // first parameter of setters is actually 'state', so here expect.anything() is used
     expect(mockSetPositionIsEmpty).toHaveBeenNthCalledWith(2, expect.anything(), { "name": position1.name, "bool": false })
-    expect(mockSetPositionId).toHaveBeenNthCalledWith(2, expect.anything(), { "name": position1.name, "id": position2.id })
+    expect(mockSetPositionRef).toHaveBeenNthCalledWith(2, expect.anything(), { "name": position1.name, "ref": position2.ref })
   })
 
   test('shuffleUp() - clears old position in the store', () => {
@@ -220,10 +219,10 @@ describe('Pages / index.vue', () => {
     wrapper.vm.getEmpty = jest.fn(() => [position1])
     wrapper.vm.shuffleUp(position2, row)
     expect(mockSetPositionIsEmpty).toHaveBeenCalledTimes(2)
-    expect(mockSetPositionId).toHaveBeenCalledTimes(2)
+    expect(mockSetPositionRef).toHaveBeenCalledTimes(2)
     // first parameter of setters is actually 'state', so here expect.anything() is used
     expect(mockSetPositionIsEmpty).toHaveBeenNthCalledWith(1, expect.anything(), { "name": position2.name, "bool": true })
-    expect(mockSetPositionId).toHaveBeenNthCalledWith(1, expect.anything(), { "name": position2.name, "id": null })
+    expect(mockSetPositionRef).toHaveBeenNthCalledWith(1, expect.anything(), { "name": position2.name, "ref": null })
   })
 
   test('getRowsToMove() - returns rows from right to left if direction is right i.e. pos4, pos3, pos2, pos1', () => {
@@ -258,18 +257,11 @@ describe('Pages / index.vue', () => {
     })
   })
 
-  test('calculateMovement() - gets all rows to move', () => {
+  test('calculateMovement() - gets all rows to move, based on direction', () => {
     wrapper.vm.getRowsToMove = jest.fn(() => [])
     wrapper.vm.calculateMovement("right")
     expect(wrapper.vm.getRowsToMove).toHaveBeenCalledTimes(1)
     expect(wrapper.vm.getRowsToMove).toHaveBeenCalledWith("right")
-  })
-
-  test('calculateMovement() - gets all rows to move', () => {
-    wrapper.vm.getRowsToMove = jest.fn(() => [])
-    wrapper.vm.calculateMovement("up")
-    expect(wrapper.vm.getRowsToMove).toHaveBeenCalledTimes(1)
-    expect(wrapper.vm.getRowsToMove).toHaveBeenCalledWith("up")
   })
 
   test('calculateMovement() - cycles through all non-empty positions to check if they can move', () => {
@@ -287,10 +279,10 @@ describe('Pages / index.vue', () => {
     wrapper.vm.shuffleUp = jest.fn()
     wrapper.vm.calculateMovement("left")
     expect(wrapper.vm.shuffleUp).toHaveBeenCalledTimes(4)
-    expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(1, position2, row, "left")
-    expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(2, position4, row, "left")
-    expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(3, position2, row, "left")
-    expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(4, position4, row, "left")
+    expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(1, position2, row)
+    expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(2, position4, row)
+    expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(3, position2, row)
+    expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(4, position4, row)
   })
 
   test('setViewPortRatio() - sets ratio to 1 for screen sizes 520 pixels and under', () => {
@@ -378,14 +370,14 @@ describe('Pages / index.vue', () => {
     expect(wrapper.vm.viewPortRatio).toBe(1)
   })
 
-  test('resize() - temporarily turns off card transitions', () => {
+  test('resize() - temporarily turns off card transitions to allow resize to happen', () => {
     wrapper.vm.setCardTransitions = jest.fn()
     wrapper.vm.resize(2)
     expect(wrapper.vm.setCardTransitions).toHaveBeenCalledTimes(1)
     expect(wrapper.vm.setCardTransitions).toHaveBeenNthCalledWith(1, false)
   })
 
-  test('resize() - temporarily disable transition animation for card elements to allow resize to happen', () => {
+  test('resize() - turns card transitions back on after slight delay', () => {
     // mocks native setTimeout
     jest.useFakeTimers();
     wrapper.vm.setCardTransitions = jest.fn()

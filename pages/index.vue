@@ -132,7 +132,7 @@
       ...mapMutations({
         setPositionIsEmpty: 'grid/setPositionIsEmpty',
         setPositionRef: 'grid/setPositionRef',
-        setCardData: 'grid/setCardData'
+        // setCardData: 'grid/setCardData'
       }),
 
       getEmpty(arr) {
@@ -198,6 +198,7 @@
         }
       },
 
+      // TODO needs test
       setCardTransitions(boolean) {
         for (let card in this.cards) {
           this.$set(this.cards[card], 'transitionEnabled', boolean)
