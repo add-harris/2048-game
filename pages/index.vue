@@ -12,13 +12,16 @@
 
 
               <div class="grid-background grid-background-adjust" ref="card-grid">
-                <Card v-for="(card, key) in cards"
-                      :key="key"
-                      :init-top="card.top"
-                      :init-left="card.left"
-                      :view-port-ratio="viewPortRatio"
-                      :transition-enabled="card.transitionEnabled"
-                ></Card>
+                <transition-group name="fade">
+                  <Card v-for="(card, index) in cards"
+                        :key="card.ref"
+                        :card-ref="card.ref"
+                        :init-top="card.top"
+                        :init-left="card.left"
+                        :view-port-ratio="viewPortRatio"
+                        :transition-enabled="card.transitionEnabled"
+                  ></Card>
+                </transition-group>
               </div>
 
 
@@ -87,7 +90,7 @@
         viewPortRatio: 1.5,
         cards: {
           // props pattern :
-          // cardRef1: { top: 0, left:0, transitionEnabled: true},
+          // cardRef1: { top: 0, left:0, transitionEnabled: true, ref: 'cardRef1},
           // cardRef2: { top: 0, left:80 },
           // cardRef3: { top: 0, left:160 },
           // cardRef4: { top: 0, left:240 },
@@ -216,11 +219,9 @@
           let cardProps = {
             top: emptyPosition.top,
             left: emptyPosition.left,
-            transitionEnabled: true
+            transitionEnabled: true,
+            ref: cardRef,
           }
-
-          // update the store - not used for now
-          // this.setCardData({"ref": cardRef, "props": cardProps})
 
           // update local data
           this.$set(this.cards, cardRef, cardProps)
@@ -232,12 +233,18 @@
       },
 
       // TODO move cards to store instead of data
+      // vue is very data driven, just the act of changing the data triggers the card to move -
+      // data flow should always be one way, down from parent to child
       slide(cardRef, top, left) {
         this.$set(this.cards[cardRef], 'top', top)
         this.$set(this.cards[cardRef], 'left', left)
       },
 
-      getRowsToMove(direction) {
+      // the logic is to pull tiles in the selected direction
+      // rows must be returned in the correct order depending on the direction
+      // i.e if direction is 'left' row1 should be as: pos1, 2, 3, 4 - pulling from left to right
+      // if direction is 'right' row1 should be reversed: pos4, 3, 2, 1 - pulling from right to left
+      getRowsByDirection(direction) {
         switch (direction) {
           case "left":
             return this.getAllRows()
@@ -261,7 +268,6 @@
 
       },
 
-      // TODO change id in the store to ref
       shuffleUp(position, row) {
 
         let firstEmpty = this.getEmpty(row)[0]
@@ -276,30 +282,53 @@
 
       },
 
-      canMerge(position, row) {
 
+      // position merges into next position i.e. position disappears
+      mergePositions(position, nextPosition) {
+        // deletes card from data by ref
+        // if position value = nextPosition value
+        this.$delete(this.cards, position.ref)
+        // removes from the store
+        this.setPositionIsEmpty({"name": position.name, "bool": true});
+        this.setPositionRef({"name": position.name, "ref": null});
+      },
+
+      calulateMerges(direction) {
+
+        let rows = this.getRowsByDirection(direction)
+
+        rows.forEach( row => {
+          row.forEach( (position, index) => {
+            // if it is not empty or an edge piece
+            if (!position.isEmpty && !position.edge.includes(direction)) {
+              let nextPosition = row[index - 1]
+              console.log(`can merger ${position.name} & ${nextPosition.name}`)
+              this.mergePositions(position, nextPosition)
+
+            }
+          })
+        })
 
       },
 
       calculateMovement(direction) {
 
-        // get all rows or columns based on direction
-        let rows = this.getRowsToMove(direction)
+        let rows = this.getRowsByDirection(direction)
 
         rows.forEach( row => {
           row.forEach( position => {
             // do a canMove check
-            // if canMove, find first empty, then shuffle up (?)
+            // if canMove, find first empty, then shuffle up
             if (!position.isEmpty) {
               let canActuallyMove = this.canMove(position, row, direction)
 
               if (canActuallyMove) {
                 this.shuffleUp(position, row)
-                this.canMerge(position, row)
               }
             }
           })
         })
+        setTimeout(() => this.calulateMerges(direction), 200)
       }
 
     }
@@ -309,6 +338,29 @@
 </script>
 
 <style>
+
+  :root {
+    --fade-width: 0;
+  }
+
+  .fade-enter-active {
+    transition: width .3s, height .3s !important;
+  }
+
+  .fade-leave-active {
+    transition: width .3s, height .5s !important;
+    /*height: 0;*/
+  }
+
+  .fade-enter {
+    /*width: 0;*/
+    height: 0;
+  }
+
+  .fade-leave-to {
+    width: var(--fade-width);
+    /*height: 0;*/
+  }
 
   .grey-container {
     margin: auto;

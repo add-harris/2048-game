@@ -225,47 +225,47 @@ describe('Pages / index.vue', () => {
     expect(mockSetPositionRef).toHaveBeenNthCalledWith(1, expect.anything(), { "name": position2.name, "ref": null })
   })
 
-  test('getRowsToMove() - returns rows from right to left if direction is right i.e. pos4, pos3, pos2, pos1', () => {
+  test('getRowsByDirection() - returns rows from right to left if direction is right i.e. pos4, pos3, pos2, pos1', () => {
     let positionsRightToLeft = [position4, position3, position2, position1]
 
-    wrapper.vm.getRowsToMove("right").forEach(row => {
+    wrapper.vm.getRowsByDirection("right").forEach(row => {
       expect(row).toEqual(positionsRightToLeft)
     })
   })
 
-  test('getRowsToMove() - returns rows from left to right if direction is left i.e. pos1, pos2, pos3, pos4', () => {
+  test('getRowsByDirection() - returns rows from left to right if direction is left i.e. pos1, pos2, pos3, pos4', () => {
     let positionsLeftToRight = [position1, position2, position3, position4]
 
-    wrapper.vm.getRowsToMove("left").forEach( row => {
+    wrapper.vm.getRowsByDirection("left").forEach(row => {
       expect(row).toEqual(positionsLeftToRight)
     })
   })
 
-  test('getRowsToMove() - returns rows from top to bottom if direction is up i.e. pos1, pos2, pos3, pos4', () => {
+  test('getRowsByDirection() - returns rows from top to bottom if direction is up i.e. pos1, pos2, pos3, pos4', () => {
     let positionsTopToBottom = [position1, position2, position3, position4]
 
-    wrapper.vm.getRowsToMove("up").forEach(row => {
+    wrapper.vm.getRowsByDirection("up").forEach(row => {
       expect(row).toEqual(positionsTopToBottom)
     })
   })
 
-  test('getRowsToMove() - returns rows from bottom to top if direction is down i.e. pos1, pos2, pos3, pos4', () => {
+  test('getRowsByDirection() - returns rows from bottom to top if direction is down i.e. pos1, pos2, pos3, pos4', () => {
     let positionsBottomToTop = [position4, position3, position2, position1]
 
-    wrapper.vm.getRowsToMove("down").forEach(row => {
+    wrapper.vm.getRowsByDirection("down").forEach(row => {
       expect(row).toEqual(positionsBottomToTop)
     })
   })
 
   test('calculateMovement() - gets all rows to move, based on direction', () => {
-    wrapper.vm.getRowsToMove = jest.fn(() => [])
+    wrapper.vm.getRowsByDirection = jest.fn(() => [])
     wrapper.vm.calculateMovement("right")
-    expect(wrapper.vm.getRowsToMove).toHaveBeenCalledTimes(1)
-    expect(wrapper.vm.getRowsToMove).toHaveBeenCalledWith("right")
+    expect(wrapper.vm.getRowsByDirection).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.getRowsByDirection).toHaveBeenCalledWith("right")
   })
 
   test('calculateMovement() - cycles through all non-empty positions to check if they can move', () => {
-    wrapper.vm.getRowsToMove = jest.fn(() => [ row ])
+    wrapper.vm.getRowsByDirection = jest.fn(() => [ row ])
     wrapper.vm.canMove = jest.fn()
     wrapper.vm.calculateMovement("right")
     expect(wrapper.vm.canMove).toHaveBeenCalledTimes(2)
@@ -274,9 +274,10 @@ describe('Pages / index.vue', () => {
   })
 
   test('calculateMovement() - triggers any positions that can move to move (shuffle up)', () => {
-    wrapper.vm.getRowsToMove = jest.fn(() => [ row, row ])
-    wrapper.vm.canMove = jest.fn(() => true)
-    wrapper.vm.shuffleUp = jest.fn()
+    wrapper.vm.getRowsByDirection = jest.fn(() => [ row ])
+    wrapper.setData({cards: {"some-ref-1": {top: 100, left: 100}, "some-ref-2": {top: 300, left: 300} } })
+    // wrapper.vm.canMove = jest.fn(() => true)
+    // wrapper.vm.shuffleUp = jest.fn()
     wrapper.vm.calculateMovement("left")
     expect(wrapper.vm.shuffleUp).toHaveBeenCalledTimes(4)
     expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(1, position2, row)
@@ -284,6 +285,11 @@ describe('Pages / index.vue', () => {
     expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(3, position2, row)
     expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(4, position4, row)
   })
+
+  // let position1 = new Position("position1", 0, 0, true, ["up"], null)
+  // let position2 = new Position("position2", 100, 100, false, ["down"], "some-ref-1")
+  // let position3 = new Position("position3", 200, 200, true, ["left"], null)
+  // let position4 = new Position("position4", 300, 300, false, ["right"], "some-ref-2")
 
   test('setViewPortRatio() - sets ratio to 1 for screen sizes 520 pixels and under', () => {
     global.innerWidth = 519
@@ -357,7 +363,7 @@ describe('Pages / index.vue', () => {
     expect(wrapper.vm.setViewPortRatio).toHaveBeenCalledTimes(1)
   })
 
-  test( 'mounted - calls setUp on mount', async () => {
+  test( 'mounted - calls setUp on mount', () => {
     destroyWrapper()
     // for spying on mounted methods - https://github.com/vuejs/vue-test-utils/issues/148
     const setUp = jest.spyOn(index.methods, 'setUp')
