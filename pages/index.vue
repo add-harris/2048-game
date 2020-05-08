@@ -90,7 +90,7 @@
       return {
         count: 1,
         viewPortRatio: 1.5,
-        transitionType: "fade",
+        transitionType: "shrink",
         cards: {
           // props pattern :
           // cardRef1: { top: 0, left:0, transitionEnabled: true, ref: 'cardRef1},
@@ -225,6 +225,8 @@
 
       generateCard() {
 
+        this.transitionType = "shrink"
+
         let emptyPosition = this.getRandomEmpty()
 
         if(emptyPosition) {
@@ -327,15 +329,22 @@
       },
 
       calculateTransitionType(direction) {
+
+        // if (direction === "left") {
+        //   this.transitionType = "collapse-x"
+        // }
         switch (direction) {
           case "left":
-            this.transitionType = "collapse-left"
+            this.transitionType = "collapse-x"
+            break;
+          case "right":
+            this.transitionType = "collapse-x"
             break;
           case "up":
-            this.transitionType = "collapse-up"
+            this.transitionType = "collapse-y"
             break;
-          default:
-            this.transitionType = "fade"
+          case "down":
+            this.transitionType = "collapse-y"
             break;
         }
       },
@@ -367,45 +376,45 @@
 
 <style>
 
-  :root {
-    --fade-width-start: 72px;
-    --fade-width-end: 0px;
-    --fade-height-start: 72px;
-    --fade-height-end: 0px;
-  }
+  /*:root {*/
+  /*  --shrink-width-start: 72px;*/
+  /*  --shrink-width-end: 0px;*/
+  /*  --shrink-height-start: 72px;*/
+  /*  --shrink-height-end: 0px;*/
+  /*}*/
 
-  @media screen and (min-width: 521px) {
-    :root {
-      --fade-width-start: 110px;
-      --fade-width-end: 0px;
-      --fade-height-start: 110px;
-      --fade-height-end: 0px;
-    }
-  }
+  /*@media screen and (min-width: 521px) {*/
+  /*  :root {*/
+  /*    --shrink-width-start: 110px;*/
+  /*    --shrink-width-end: 0px;*/
+  /*    --shrink-height-start: 110px;*/
+  /*    --shrink-height-end: 0px;*/
+  /*  }*/
+  /*}*/
 
   /* common for all transitions */
-  .fade-enter-active , .fade-leave-active,
-  .collapse-left-enter-active, .collapse-left-leave-active,
-  .collapse-up-enter-active, .collapse-up-leave-active
+  .shrink-enter-active, .shrink-leave-active,
+  .collapse-x-enter-active, .collapse-x-leave-active,
+  .collapse-y-enter-active, .collapse-y-leave-active
   {
     transition: width .3s, height .3s , opacity .3s , transform .3s !important;
   }
 
-  /* diagonal entrance */
-  .fade-enter {
+  /* default appear disappear from centre transition */
+  .shrink-enter, .shrink-leave-to {
     transform: scale(0, 0)
   }
 
-  .fade-leave-to {
-    transform: scale(0, 0)
+  /* can do collapse up & left, but not right & down yet, so using these generic folds for now */
+  /* may need to use javascript hooks to do right & down */
+  .collapse-y-leave-to {
+    /* to collapse up use height: 0 */
+    transform: scaleY(0)
   }
 
-  .collapse-up-leave-to {
-    height: 0;
-  }
-
-  .collapse-left-leave-to {
-    width: 0;
+  .collapse-x-leave-to {
+    /* to collapse left use width: 0 */
+    transform: scaleX(0)
   }
 
 
