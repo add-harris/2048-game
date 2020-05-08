@@ -12,7 +12,8 @@
 
 
               <div class="grid-background grid-background-adjust" ref="card-grid">
-                <transition-group name="fade">
+
+                <transition-group :name="transitionType">
                   <Card v-for="(card, index) in cards"
                         :key="card.ref"
                         :card-ref="card.ref"
@@ -22,6 +23,7 @@
                         :transition-enabled="card.transitionEnabled"
                   ></Card>
                 </transition-group>
+
               </div>
 
 
@@ -38,10 +40,10 @@
               <v-row>
                 <div style="margin: 10px">
 
-                  <v-btn color="primary" @click="calculateMovement('left')">Slide Left</v-btn>
-                  <v-btn color="primary" @click="calculateMovement('up')">Slide Up</v-btn>
-                  <v-btn color="primary" @click="calculateMovement('right')">Slide Right</v-btn>
-                  <v-btn color="primary" @click="calculateMovement('down')">Slide Down</v-btn>
+                  <v-btn color="primary" @click="runSequence('left')">Slide Left</v-btn>
+                  <v-btn color="primary" @click="runSequence('up')">Slide Up</v-btn>
+                  <v-btn color="primary" @click="runSequence('right')">Slide Right</v-btn>
+                  <v-btn color="primary" @click="runSequence('down')">Slide Down</v-btn>
 
 <!--                  unable to get vue html based event listeners to work so used traditional js-->
 <!--                  <input value="input" type="button" :keyup.space="print()" >-->
@@ -88,6 +90,7 @@
       return {
         count: 1,
         viewPortRatio: 1.5,
+        transitionType: "fade",
         cards: {
           // props pattern :
           // cardRef1: { top: 0, left:0, transitionEnabled: true, ref: 'cardRef1},
@@ -138,6 +141,8 @@
         // setCardData: 'grid/setCardData'
       }),
 
+      // store related methods
+
       getEmpty(arr) {
         return arr.filter(position => position.isEmpty === true)
       },
@@ -153,6 +158,8 @@
       getAllColumns() {
         return [this.getFirstColumn(), this.getSecondColumn(), this.getThirdColumn(), this.getForthColumn()]
       },
+
+      // setup - key & viewport listeners
 
       setUp() {
         this.addListeners()
@@ -184,28 +191,36 @@
         setTimeout(() => this.setCardTransitions(true), 300)
       },
 
-      checkKeyPress(e) {
-        switch (e.key) {
-          case 'ArrowLeft':
-            this.calculateMovement('left')
-            break;
-          case 'ArrowUp':
-            this.calculateMovement('up')
-            break;
-          case 'ArrowRight':
-            this.calculateMovement('right')
-            break;
-          case 'ArrowDown':
-            this.calculateMovement('down')
-            break;
-        }
-      },
-
       // TODO needs test
       setCardTransitions(boolean) {
         for (let card in this.cards) {
           this.$set(this.cards[card], 'transitionEnabled', boolean)
         }
+      },
+
+      checkKeyPress(e) {
+        switch (e.key) {
+          case 'ArrowLeft':
+            this.runSequence('left')
+            break;
+          case 'ArrowUp':
+            this.runSequence('up')
+            break;
+          case 'ArrowRight':
+            this.runSequence('right')
+            break;
+          case 'ArrowDown':
+            this.runSequence('down')
+            break;
+        }
+      },
+
+      // main methods
+
+      runSequence(direction) {
+        this.calculateTransitionType(direction)
+        this.calculateMovement(direction)
+        setTimeout(() => this.calulateMerges(direction), 400)
       },
 
       generateCard() {
@@ -311,6 +326,20 @@
 
       },
 
+      calculateTransitionType(direction) {
+        switch (direction) {
+          case "left":
+            this.transitionType = "collapse-left"
+            break;
+          case "up":
+            this.transitionType = "collapse-up"
+            break;
+          default:
+            this.transitionType = "fade"
+            break;
+        }
+      },
+
       calculateMovement(direction) {
 
         let rows = this.getRowsByDirection(direction)
@@ -328,7 +357,6 @@
             }
           })
         })
-        setTimeout(() => this.calulateMerges(direction), 200)
       }
 
     }
@@ -340,27 +368,46 @@
 <style>
 
   :root {
-    --fade-width: 0;
+    --fade-width-start: 72px;
+    --fade-width-end: 0px;
+    --fade-height-start: 72px;
+    --fade-height-end: 0px;
   }
 
-  .fade-enter-active {
-    transition: width .3s, height .3s !important;
+  @media screen and (min-width: 521px) {
+    :root {
+      --fade-width-start: 110px;
+      --fade-width-end: 0px;
+      --fade-height-start: 110px;
+      --fade-height-end: 0px;
+    }
   }
 
-  .fade-leave-active {
-    transition: width .3s, height .5s !important;
-    /*height: 0;*/
+  /* common for all transitions */
+  .fade-enter-active , .fade-leave-active,
+  .collapse-left-enter-active, .collapse-left-leave-active,
+  .collapse-up-enter-active, .collapse-up-leave-active
+  {
+    transition: width .3s, height .3s , opacity .3s , transform .3s !important;
   }
 
+  /* diagonal entrance */
   .fade-enter {
-    /*width: 0;*/
-    height: 0;
+    transform: scale(0, 0)
   }
 
   .fade-leave-to {
-    width: var(--fade-width);
-    /*height: 0;*/
+    transform: scale(0, 0)
   }
+
+  .collapse-up-leave-to {
+    height: 0;
+  }
+
+  .collapse-left-leave-to {
+    width: 0;
+  }
+
 
   .grey-container {
     margin: auto;

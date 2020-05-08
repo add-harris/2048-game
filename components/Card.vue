@@ -1,6 +1,6 @@
 <template>
 <!--  <v-expand-x-transition>-->
-    <v-card class="sliding-card sliding-card-adjust" v-bind:style="computedStyles" v-bind:ref="cardRef">{{initTop}}, {{initLeft}}, {{viewPortRatio}}</v-card>
+    <v-card class="sliding-card sliding-card-adjust" v-bind:style="computedStyles" ref="cardRef">{{initTop}}, {{initLeft}}, {{viewPortRatio}}</v-card>
 <!--  </v-expand-x-transition>-->
 
 </template>
