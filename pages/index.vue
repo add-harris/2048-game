@@ -21,6 +21,7 @@
                         :init-left="card.left"
                         :view-port-ratio="viewPortRatio"
                         :transition-enabled="card.transitionEnabled"
+                        :value="card.value"
                   ></Card>
                 </transition-group>
 
@@ -93,7 +94,7 @@
         transitionType: "shrink",
         cards: {
           // props pattern :
-          // cardRef1: { top: 0, left:0, transitionEnabled: true, ref: 'cardRef1},
+          // cardRef1: { top: 0, left:0, transitionEnabled: true, ref: 'cardRef1', value: 5},
           // cardRef2: { top: 0, left:80 },
           // cardRef3: { top: 0, left:160 },
           // cardRef4: { top: 0, left:240 },
@@ -238,6 +239,7 @@
             left: emptyPosition.left,
             transitionEnabled: true,
             ref: cardRef,
+            value: this.count + 100
           }
 
           // update local data

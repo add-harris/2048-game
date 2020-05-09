@@ -1,12 +1,14 @@
 <template>
 
-    <v-card class="sliding-card sliding-card-adjust" v-bind:style="computedStyles" ref="cardRef">{{initTop}}, {{initLeft}}, {{viewPortRatio}}</v-card>
+  <v-card class="sliding-card sliding-card-adjust justify-center" v-bind:style="computedStyles" ref="cardRef">
+    <p class="center">{{value}}</p>
+  </v-card>
 
 </template>
 
 <script>
 
-  // TODO remove cardRef & transitionEnabled from props as no longer used
+  // TODO review props as some no longer used
 
   export default {
     props: {
@@ -14,7 +16,8 @@
       initLeft: Number,
       viewPortRatio: Number,
       transitionEnabled: Boolean,
-      cardRef: String
+      cardRef: String,
+      value: Number
     },
     data() {
       return {
@@ -24,11 +27,13 @@
     computed: {
       computedStyles() {
         // let transitionEnabled = this.transitionEnabled ? 'top 700ms, left 700ms' : 'none'
-        return {
+        const style = {
           top: (this.initTop * this.viewPortRatio) + 'px',
           left: (this.initLeft * this.viewPortRatio) + 'px',
           // transition: transitionEnabled
         }
+        if (!this.transitionEnabled) style.transition = 'none'
+        return style
       }
     }
   }
@@ -36,6 +41,14 @@
 </script>
 
 <style>
+
+  .center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Varela Round', sans-serif;
+  }
 
   .sliding-card {
     position: absolute;
@@ -49,6 +62,10 @@
       width: 72px;
       margin: 5px;
     }
+
+    .center {
+      font-size: 1.3em
+    }
   }
 
   @media screen and (min-width: 521px) {
@@ -56,6 +73,10 @@
       height: 110px;
       width: 110px;
       margin: 5px;
+    }
+
+    .center {
+      font-size: 2em
     }
   }
 
