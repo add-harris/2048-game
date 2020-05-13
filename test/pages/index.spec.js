@@ -21,13 +21,13 @@ describe('Pages / index.vue', () => {
 
   // test variables
   let position1 = new Position("position1", 0, 0, true, ["up"], null)
-  let position2 = new Position("position2", 100, 100, false, ["down"], "some-ref-1")
+  let position2 = new Position("position2", 100, 100, false, ["down"], "cardRef1")
   let position3 = new Position("position3", 200, 200, true, ["left"], null)
-  let position4 = new Position("position4", 300, 300, false, ["right"], "some-ref-2")
+  let position4 = new Position("position4", 300, 300, false, ["right"], "cardRef2")
 
   let row = [position1, position2, position3, position4]
 
-  let cardRef1 = {
+  let cardData1 = {
       ref: "cardRef1",
       top: 100,
       left: 100,
@@ -35,13 +35,15 @@ describe('Pages / index.vue', () => {
       value: 1
   }
 
-  let cardRef2 = {
+  let cardData2 = {
       ref: "cardRef2",
       top: 300,
       left: 300,
       transitionEnabled: true,
       value: 2
   }
+
+  let cardRef1, cardRef2
 
   const defaultInnerWidth = global.innerWidth
 
@@ -94,24 +96,30 @@ describe('Pages / index.vue', () => {
     return new Vuex.Store({ getters, mutations })
   }
 
-  function destroyWrapper() {
-    wrapper.destroy()
-  }
-
-  function createWrapper() {
-    store = createStore()
-    wrapper = mount(index, {attachToDocument: true, localVue, store})
-  }
-
   // hooks
   beforeEach(async () => {
     createWrapper()
+    refreshDataObjects()
   })
 
   afterEach(async () => {
     destroyWrapper()
     global.innerWidth = defaultInnerWidth
+    jest.clearAllTimers()
   })
+
+  function createWrapper() {
+    store = createStore()
+    wrapper = mount(index, {attachToDocument: true, localVue, store})
+  }
+  function destroyWrapper() {
+    wrapper.destroy()
+  }
+
+  function refreshDataObjects() {
+    cardRef1 = Object.create(cardData1)
+    cardRef2 = Object.create(cardData2)
+  }
 
 
   test('getEmpty() - returns only empty positions', () => {
@@ -148,7 +156,6 @@ describe('Pages / index.vue', () => {
     expect(mockGetForthColumn).toHaveBeenCalledTimes(1)
   })
 
-
   test('generateCard() - do nothing if no empty spaces left', () => {
     wrapper.vm.getRandomEmpty = jest.fn()
     wrapper.vm.generateCard()
@@ -161,7 +168,7 @@ describe('Pages / index.vue', () => {
     wrapper.vm.getRandomEmpty = jest.fn(() => position2)
     expect(wrapper.vm.cards).toEqual({})
     wrapper.vm.generateCard()
-    expect(wrapper.vm.cards["cardRef1"]).toEqual(cardRef1)
+    expect(wrapper.vm.cards["cardRef1"]).toEqual(cardData1)
   })
 
   test('generateCard() - updates the store', () => {
@@ -481,6 +488,8 @@ describe('Pages / index.vue', () => {
 
   test('runSequence() - sets transition type', () => {
     wrapper.vm.calculateTransitionType = jest.fn()
+    wrapper.vm.calculateMovement = jest.fn()
+    wrapper.vm.calculateMerges = jest.fn()
     wrapper.vm.runSequence('up')
     expect(wrapper.vm.calculateTransitionType).toHaveBeenCalledTimes(1)
     expect(wrapper.vm.calculateTransitionType).toHaveBeenCalledWith('up')
@@ -494,16 +503,38 @@ describe('Pages / index.vue', () => {
   })
 
   test('runSequence() - calculates merges after slight delay', () => {
-    wrapper.vm.calculateMerges = jest.fn()
-    wrapper.vm.calculateMovement = jest.fn()
     jest.useFakeTimers()
+    wrapper.vm.calculateTransitionType = jest.fn()
+    wrapper.vm.calculateMovement = jest.fn()
+    wrapper.vm.calculateMerges = jest.fn()
     wrapper.vm.runSequence('left')
     jest.runAllTimers()
     expect(wrapper.vm.calculateMerges).toHaveBeenCalledTimes(1)
     expect(wrapper.vm.calculateMerges).toHaveBeenCalledWith('left', wrapper.vm.calculateMovement)
   })
 
+  test('mergePositions() - delete card 1 from card data', () => {
+    wrapper.setData({ cards: { cardRef1, cardRef2 } })
+    expect(wrapper.vm.cards["cardRef1"]).toBeDefined()
+    wrapper.vm.mergePositions(position2, position4, 4)
+    expect(wrapper.vm.cards["cardRef1"]).not.toBeDefined()
+  })
 
+  test('mergePositions() - update card data for card 2 with new value', () => {
+    wrapper.setData({ cards: { cardRef1, cardRef2 } })
+    expect(wrapper.vm.cards["cardRef2"].value).toBe(2)
+    wrapper.vm.mergePositions(position2, position4, 4)
+    expect(wrapper.vm.cards["cardRef2"].value).toBe(4)
+  })
+
+  test('mergePositions() - update the store to remove card 1', () => {
+    wrapper.setData({ cards: { cardRef1, cardRef2 } })
+    wrapper.vm.mergePositions(position2, position4, 4)
+    expect(mockSetPositionIsEmpty).toHaveBeenCalledTimes(1)
+    expect(mockSetPositionIsEmpty).toHaveBeenCalledWith(expect.anything(), {"name": position2.name, "bool": true})
+    expect(mockSetPositionRef).toHaveBeenCalledTimes(1)
+    expect(mockSetPositionRef).toHaveBeenCalledWith(expect.anything(), {"name": position2.name, "ref": null})
+  })
 
 
 })

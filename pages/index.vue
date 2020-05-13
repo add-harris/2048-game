@@ -348,6 +348,7 @@
         callbackFunction(direction)
       },
 
+      // checked
       // position merges into next position i.e. position disappears
       mergePositions(position, nextPosition, newValue) {
         // deletes first card from data by ref
