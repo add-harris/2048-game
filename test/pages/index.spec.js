@@ -57,6 +57,8 @@ describe('Pages / index.vue', () => {
   let mockGetThirdColumn
   let mockGetForthColumn
   let mockGetAll
+  let mockGetAllColumns
+  let mockGetAllRows
 
   let mockSetPositionIsEmpty
   let mockSetPositionRef
@@ -72,6 +74,8 @@ describe('Pages / index.vue', () => {
     mockGetThirdColumn = jest.fn(() => row)
     mockGetForthColumn = jest.fn(() => row)
     mockGetAll = jest.fn(() => row)
+    mockGetAllColumns = jest.fn(() => [ row, row ])
+    mockGetAllRows = jest.fn(() => [ row, row ])
 
     let getters = {
       'grid/getFirstRow': mockGetFirstRow,
@@ -82,7 +86,10 @@ describe('Pages / index.vue', () => {
       'grid/getSecondColumn': mockGetSecondColumn,
       'grid/getThirdColumn': mockGetThirdColumn,
       'grid/getForthColumn': mockGetForthColumn,
-      "grid/getAll": mockGetAll
+      'grid/getAll': mockGetAll,
+      'grid/getAllColumns': mockGetAllColumns,
+      'grid/getAllRows': mockGetAllRows
+
     }
 
     mockSetPositionIsEmpty = jest.fn()
@@ -134,26 +141,6 @@ describe('Pages / index.vue', () => {
     for (let i = 0; i < 10; i++) {
       expect(possibleEmpties.includes(wrapper.vm.getRandomEmpty())).toBeTruthy()
     }
-  })
-
-  test('getAllRows() - get arr of all rows from the store', () => {
-    wrapper.vm.getAllRows().forEach(row => {
-      expect(row).toBe(row)
-    })
-    expect(mockGetFirstRow).toHaveBeenCalledTimes(1)
-    expect(mockGetSecondRow).toHaveBeenCalledTimes(1)
-    expect(mockGetThirdRow).toHaveBeenCalledTimes(1)
-    expect(mockGetForthRow).toHaveBeenCalledTimes(1)
-  })
-
-  test('getAllColumns() - get arr of all rows from the store', () => {
-    wrapper.vm.getAllColumns().forEach(row => {
-      expect(row).toBe(row)
-    })
-    expect(mockGetFirstColumn).toHaveBeenCalledTimes(1)
-    expect(mockGetSecondColumn).toHaveBeenCalledTimes(1)
-    expect(mockGetThirdColumn).toHaveBeenCalledTimes(1)
-    expect(mockGetForthColumn).toHaveBeenCalledTimes(1)
   })
 
   test('generateCard() - do nothing if no empty spaces left', () => {

@@ -108,7 +108,7 @@
       // can access whole state with this.grid, though may not be a good idea
 
       // to store state across multiple pages
-      // this does work & load cards when the exist in the store, but then breaks further cards being made
+      // this does work & load cards when they exist in the store, but then breaks further cards being made
       // is also a hacky way of updating cards data (should use $set)
       // if used a flag should be set in the store to run it once when returning to the page, reload tiles, then turn it back off
       // mapCards: async function (state) {
@@ -133,16 +133,16 @@
         getThirdColumn:   'grid/getThirdColumn',
         getForthColumn:   'grid/getForthColumn',
         getAll:           'grid/getAll',
-        // getStoredCards:   'grid/getStoredCards'
+        getAllColumns:    'grid/getAllColumns',
+        getAllRows:       'grid/getAllRows'
       }),
 
       ...mapMutations({
         setPositionIsEmpty: 'grid/setPositionIsEmpty',
         setPositionRef: 'grid/setPositionRef',
-        // setCardData: 'grid/setCardData'
       }),
 
-      // store related methods TODO move to store
+      // store related methods
 
       getEmpty(arr) {
         return arr.filter(position => position.isEmpty === true)
@@ -150,14 +150,6 @@
 
       getRandomEmpty() {
         return _.sample(this.getEmpty(this.getAll()))
-      },
-
-      getAllRows() {
-        return [this.getFirstRow(), this.getSecondRow(), this.getThirdRow(), this.getForthRow()]
-      },
-
-      getAllColumns() {
-        return [this.getFirstColumn(), this.getSecondColumn(), this.getThirdColumn(), this.getForthColumn()]
       },
 
       // setup - key & viewport listeners

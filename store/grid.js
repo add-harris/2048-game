@@ -18,10 +18,6 @@ export const state = () => ({
   position15: new Position("position15",240, 160, true, ["down"], null),
   position16: new Position("position16",240, 240, true, ["down", "right"], null),
 
-  storedCards: {
-    // cardRef1: { top: 0, left:0, transitionEnabled: true}
-  }
-
 })
 
 export const getters = {
@@ -49,15 +45,33 @@ export const getters = {
   getForthColumn (state) {
     return [state.position4, state.position8, state.position12, state.position16]
   },
+
   getAll (state) {
     return [state.position1, state.position2, state.position3, state.position4,
             state.position5, state.position6, state.position7, state.position8,
             state.position9, state.position10, state.position11, state.position12,
             state.position13, state.position14, state.position15, state.position16]
   },
-  getStoredCards (state) {
-    return state.storedCards
+
+  getAllColumns(state) {
+    return [
+      [state.position1, state.position5, state.position9, state.position13],
+      [state.position2, state.position6, state.position10, state.position14],
+      [state.position3, state.position7, state.position11, state.position15],
+      [state.position4, state.position8, state.position12, state.position16]
+    ]
+  },
+
+  getAllRows(state) {
+    return [
+      [state.position1, state.position2, state.position3, state.position4],
+      [state.position5, state.position6, state.position7, state.position8],
+      [state.position9, state.position10, state.position11, state.position12],
+      [state.position13, state.position14, state.position15, state.position16]
+    ]
   }
+
+
 }
 
 // multiple parameters must be passed to mutations as a payload object
@@ -67,9 +81,6 @@ export const mutations = {
   },
   setPositionRef (state, obj) {
     state[obj.name].ref = obj.ref
-  },
-  setCardData (state, obj) {
-    state.storedCards[obj.ref] = obj.props
   }
 }
 
