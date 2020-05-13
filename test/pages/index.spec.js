@@ -27,11 +27,20 @@ describe('Pages / index.vue', () => {
 
   let row = [position1, position2, position3, position4]
 
-  let cardData = { "cardRef1" : {
+  let cardRef1 = {
+      ref: "cardRef1",
       top: 100,
       left: 100,
-      transitionEnabled: true
-    }
+      transitionEnabled: true,
+      value: 1
+  }
+
+  let cardRef2 = {
+      ref: "cardRef2",
+      top: 300,
+      left: 300,
+      transitionEnabled: true,
+      value: 2
   }
 
   const defaultInnerWidth = global.innerWidth
@@ -152,7 +161,7 @@ describe('Pages / index.vue', () => {
     wrapper.vm.getRandomEmpty = jest.fn(() => position2)
     expect(wrapper.vm.cards).toEqual({})
     wrapper.vm.generateCard()
-    expect(wrapper.vm.cards).toEqual(cardData)
+    expect(wrapper.vm.cards["cardRef1"]).toEqual(cardRef1)
   })
 
   test('generateCard() - updates the store', () => {
@@ -164,8 +173,15 @@ describe('Pages / index.vue', () => {
     expect(mockSetPositionRef).toHaveBeenCalledWith(expect.anything(), {"name": "position2", "ref": "cardRef1"})
   })
 
+  test('generateCard() - increment data count', () => {
+    wrapper.vm.getRandomEmpty = jest.fn(() => position2)
+    expect(wrapper.vm.count).toBe(1)
+    wrapper.vm.generateCard()
+    expect(wrapper.vm.count).toBe(2)
+  })
+
   test('slide() - updates card data with new position values', () => {
-    wrapper.setData({ cards: cardData})
+    wrapper.setData({ cards: { cardRef1 } })
     wrapper.vm.slide("cardRef1", 110, 120)
     expect(wrapper.vm.cards["cardRef1"].top).toBe(110)
     expect(wrapper.vm.cards["cardRef1"].left).toBe(120)
@@ -274,10 +290,10 @@ describe('Pages / index.vue', () => {
   })
 
   test('calculateMovement() - triggers any positions that can move to move (shuffle up)', () => {
-    wrapper.vm.getRowsByDirection = jest.fn(() => [ row ])
-    wrapper.setData({cards: {"some-ref-1": {top: 100, left: 100}, "some-ref-2": {top: 300, left: 300} } })
-    // wrapper.vm.canMove = jest.fn(() => true)
-    // wrapper.vm.shuffleUp = jest.fn()
+    wrapper.vm.getRowsByDirection = jest.fn(() => [ row, row ])
+    wrapper.setData({ cards: { cardRef1, cardRef2 } })
+    wrapper.vm.canMove = jest.fn(() => true)
+    wrapper.vm.shuffleUp = jest.fn()
     wrapper.vm.calculateMovement("left")
     expect(wrapper.vm.shuffleUp).toHaveBeenCalledTimes(4)
     expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(1, position2, row)
@@ -285,11 +301,6 @@ describe('Pages / index.vue', () => {
     expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(3, position2, row)
     expect(wrapper.vm.shuffleUp).toHaveBeenNthCalledWith(4, position4, row)
   })
-
-  // let position1 = new Position("position1", 0, 0, true, ["up"], null)
-  // let position2 = new Position("position2", 100, 100, false, ["down"], "some-ref-1")
-  // let position3 = new Position("position3", 200, 200, true, ["left"], null)
-  // let position4 = new Position("position4", 300, 300, false, ["right"], "some-ref-2")
 
   test('setViewPortRatio() - sets ratio to 1 for screen sizes 520 pixels and under', () => {
     global.innerWidth = 519
@@ -396,35 +407,103 @@ describe('Pages / index.vue', () => {
 
   test('checkKeyPress() - triggers movement in upward direction on key press', () => {
     let event = new KeyboardEvent('keyup', {'key' : 'ArrowUp'})
-    wrapper.vm.calculateMovement = jest.fn()
+    wrapper.vm.runSequence = jest.fn()
     wrapper.vm.checkKeyPress(event)
-    expect(wrapper.vm.calculateMovement).toHaveBeenCalledTimes(1)
-    expect(wrapper.vm.calculateMovement).toHaveBeenCalledWith('up')
+    expect(wrapper.vm.runSequence).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.runSequence).toHaveBeenCalledWith('up')
   })
 
   test('checkKeyPress() - triggers movement in downward direction on key press', () => {
     let event = new KeyboardEvent('keyup', {'key' : 'ArrowDown'})
-    wrapper.vm.calculateMovement = jest.fn()
+    wrapper.vm.runSequence = jest.fn()
     wrapper.vm.checkKeyPress(event)
-    expect(wrapper.vm.calculateMovement).toHaveBeenCalledTimes(1)
-    expect(wrapper.vm.calculateMovement).toHaveBeenCalledWith('down')
+    expect(wrapper.vm.runSequence).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.runSequence).toHaveBeenCalledWith('down')
   })
 
   test('checkKeyPress() - triggers movement in left direction on key press', () => {
     let event = new KeyboardEvent('keyup', {'key' : 'ArrowLeft'})
-    wrapper.vm.calculateMovement = jest.fn()
+    wrapper.vm.runSequence = jest.fn()
     wrapper.vm.checkKeyPress(event)
-    expect(wrapper.vm.calculateMovement).toHaveBeenCalledTimes(1)
-    expect(wrapper.vm.calculateMovement).toHaveBeenCalledWith('left')
+    expect(wrapper.vm.runSequence).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.runSequence).toHaveBeenCalledWith('left')
   })
 
   test('checkKeyPress() - triggers movement in right direction on key press', () => {
     let event = new KeyboardEvent('keyup', {'key' : 'ArrowRight'})
-    wrapper.vm.calculateMovement = jest.fn()
+    wrapper.vm.runSequence = jest.fn()
     wrapper.vm.checkKeyPress(event)
-    expect(wrapper.vm.calculateMovement).toHaveBeenCalledTimes(1)
-    expect(wrapper.vm.calculateMovement).toHaveBeenCalledWith('right')
+    expect(wrapper.vm.runSequence).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.runSequence).toHaveBeenCalledWith('right')
   })
+
+  test('calculateTransitionType() - set transition type to "collapse-x" when direction is left', () => {
+    expect(wrapper.vm.transitionType).toBe("shrink")
+    wrapper.vm.calculateTransitionType("left")
+    expect(wrapper.vm.transitionType).toBe("collapse-x")
+  })
+
+  test('calculateTransitionType() - set transition type to "collapse-x" when direction is right', () => {
+    expect(wrapper.vm.transitionType).toBe("shrink")
+    wrapper.vm.calculateTransitionType("right")
+    expect(wrapper.vm.transitionType).toBe("collapse-x")
+  })
+
+  test('calculateTransitionType() - set transition type to "collapse-y" when direction is up', () => {
+    expect(wrapper.vm.transitionType).toBe("shrink")
+    wrapper.vm.calculateTransitionType("up")
+    expect(wrapper.vm.transitionType).toBe("collapse-y")
+  })
+
+  test('calculateTransitionType() - set transition type to "collapse-x" when direction is down', () => {
+    expect(wrapper.vm.transitionType).toBe("shrink")
+    wrapper.vm.calculateTransitionType("down")
+    expect(wrapper.vm.transitionType).toBe("collapse-y")
+  })
+
+  test('setCardTransitions() - for all cards in cards in card data - set transitionEnabled to false', () => {
+    wrapper.setData({ cards: { cardRef1, cardRef2 } })
+    wrapper.vm.setCardTransitions(false)
+    expect(wrapper.vm.cards["cardRef1"].transitionEnabled).toBeFalsy()
+    expect(wrapper.vm.cards["cardRef2"].transitionEnabled).toBeFalsy()
+  })
+
+  test('setCardTransitions() - for all cards in cards in card data - set transitionEnabled to true', () => {
+    let cardRefFalse1 = Object.create(cardRef1)
+    let cardRefFalse2 = Object.create(cardRef2)
+    cardRefFalse1.transitionEnabled = false
+    cardRefFalse2.transitionEnabled = false
+    wrapper.setData({ cards: { cardRefFalse1, cardRefFalse2 } })
+    wrapper.vm.setCardTransitions(true)
+    expect(wrapper.vm.cards["cardRefFalse1"].transitionEnabled).toBeTruthy()
+    expect(wrapper.vm.cards["cardRefFalse2"].transitionEnabled).toBeTruthy()
+  })
+
+  test('runSequence() - sets transition type', () => {
+    wrapper.vm.calculateTransitionType = jest.fn()
+    wrapper.vm.runSequence('up')
+    expect(wrapper.vm.calculateTransitionType).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.calculateTransitionType).toHaveBeenCalledWith('up')
+  })
+
+  test('runSequence() - calculates movements', () => {
+    wrapper.vm.calculateMovement = jest.fn()
+    wrapper.vm.runSequence('down')
+    expect(wrapper.vm.calculateMovement).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.calculateMovement).toHaveBeenCalledWith('down')
+  })
+
+  test('runSequence() - calculates merges after slight delay', () => {
+    wrapper.vm.calculateMerges = jest.fn()
+    wrapper.vm.calculateMovement = jest.fn()
+    jest.useFakeTimers()
+    wrapper.vm.runSequence('left')
+    jest.runAllTimers()
+    expect(wrapper.vm.calculateMerges).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.calculateMerges).toHaveBeenCalledWith('left', wrapper.vm.calculateMovement)
+  })
+
+
 
 
 })
