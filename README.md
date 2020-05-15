@@ -1,28 +1,12 @@
 # 2048-game
 
-TODO:
+## Description
 
-generate new random cards - x
-calculate movement distances - x
-action movements - x
-update state of grid - x
 
-make app fit on mobile screen size - x
-make app scale size across screen sizes - x
+2048 moving card game. Click the buttons or use the arrow keys to slide the cards around. 
+Smash cards of the same value together to add them up. Reach 2048 to win the game!
 
-calculate merges
-action merges
-
-split tile out to component
-show tile number values
-show tile colors
-randomly generate appropriate tile value
-
-animate tile generation 
-animate tile collapse
-
-win/loose scenarios 
-
+Built with [Vue.js](https://vuejs.org/) & [Nuxt](https://nuxtjs.org/) project. 
 
 ## Build Setup
 
