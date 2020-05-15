@@ -45,6 +45,10 @@ describe('Pages / index.vue', () => {
 
   let cardRef1, cardRef2
 
+  function cardDataBuilder(ref, top, left, value, transitionEnabled = true) {
+    return { ref, top, left, transitionEnabled, value }
+  }
+
   const defaultInnerWidth = global.innerWidth
 
   // test helpers
@@ -521,6 +525,42 @@ describe('Pages / index.vue', () => {
     expect(mockSetPositionIsEmpty).toHaveBeenCalledWith(expect.anything(), {"name": position2.name, "bool": true})
     expect(mockSetPositionRef).toHaveBeenCalledTimes(1)
     expect(mockSetPositionRef).toHaveBeenCalledWith(expect.anything(), {"name": position2.name, "ref": null})
+  })
+
+  test('calculateMerges() - calculate merges correctly', () => {
+
+    let position5 = new Position("position5", 0, 0, false, ["left"], "cardRef5")
+    let position6 = new Position("position6", 100, 100, false, [], "cardRef6")
+    let position7 = new Position("position7", 200, 200, false, [], "cardRef7")
+    let position8 = new Position("position8", 300, 300, false, ["right"], "cardRef8")
+
+    let testRow = [position5, position6, position7, position8]
+
+    let cardRef5 = cardDataBuilder("cardRef5", 0, 0, 2)
+    let cardRef6 = cardDataBuilder("cardRef6", 100, 100, 2)
+    let cardRef7 = cardDataBuilder("cardRef7", 200, 200, 2)
+    let cardRef8 = cardDataBuilder("cardRef8", 300, 300, 2)
+
+    wrapper.setData({ cards: { cardRef5, cardRef6, cardRef7, cardRef8 } })
+
+    wrapper.vm.getRowsByDirection = jest.fn(() => [ testRow ])
+    wrapper.vm.mergePositions = jest.fn()
+    let fakeCallback = () => {}
+
+    wrapper.vm.calculateMerges("left", fakeCallback)
+
+    expect(wrapper.vm.mergePositions).toBeCalledTimes(2)
+    expect(wrapper.vm.mergePositions).toHaveBeenNthCalledWith(1, position6, position5, 4)
+    expect(wrapper.vm.mergePositions).toHaveBeenNthCalledWith(2, position8, position7, 4)
+
+  })
+
+  test('calculateMerges() - calls callback function to re-trigger movements', () => {
+    wrapper.vm.getRowsByDirection = jest.fn(() => [])
+    let fakeCallback = jest.fn()
+    wrapper.vm.calculateMerges("right", fakeCallback)
+    expect(fakeCallback).toBeCalledTimes(1)
+    expect(fakeCallback).toBeCalledWith("right")
   })
 
 

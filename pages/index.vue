@@ -316,28 +316,50 @@
       },
 
       // TODO - rework to fix bug, maybe remove callback function
-      calculateMerges(direction, callbackFunction) {
+      calculateMerges(direction, callback) {
 
-        let rows = this.getRowsByDirection(direction)
+        let allRows = this.getRowsByDirection(direction)
 
-        rows.forEach( row => {
-          row.forEach( (position, index) => {
-            // if it is not empty or an edge piece
+        let calculatedMerges = allRows.reduce( (allMerges, row) => {
+
+          let skipNext = false
+
+          allMerges.push(row.reduce( (merges, position, index) => {
+
+            if (skipNext) {
+              skipNext = false
+              return merges
+            }
+
             if (!position.isEmpty && !position.edge.includes(direction)) {
-              let nextPosition = row[index - 1]
-              console.log(`can merger ${position.name} & ${nextPosition.name}`)
 
+              let nextPosition = row[index - 1]
               let value1 = this.cards[position.ref].value
               let value2 = this.cards[nextPosition.ref].value
 
-              // bug is here
               if (value1 === value2) {
-                this.mergePositions(position, nextPosition, (value1 + value2) )
+                merges.push({
+                  firstPosition: position,
+                  secondPosition: nextPosition,
+                  value: (value1 + value2)
+                })
+                skipNext = true
               }
             }
-          })
+
+            return merges
+
+          }, []))
+
+          return allMerges
+
+        }, [])
+
+        calculatedMerges.flat().map( merge => {
+          this.mergePositions(merge.firstPosition, merge.secondPosition, merge.value)
         })
-        callbackFunction(direction)
+
+        callback(direction)
       },
 
       // checked
