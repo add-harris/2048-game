@@ -28,8 +28,12 @@ animate tile generation - x
 
 animate tile collapse - x
 
-show tile colors
+randomly generate appropriate tile value - x
 
-randomly generate appropriate tile value
+create random start position - x
+
+show tile colors - x
+
+score component
 
 win/loose scenarios 

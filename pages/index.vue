@@ -8,6 +8,8 @@
 
         <v-card-title class="headline">Slide</v-card-title>
 
+        <Score></Score>
+
         <div class="grey-container grey-container-adjust">
 
 
@@ -77,6 +79,7 @@
 
   import { Position } from '../utils/Position'
   import Card from '../components/Card'
+  import Score from '../components/Score'
   import { mapState, mapGetters, mapMutations} from 'vuex'
   import _ from 'lodash'
 
@@ -84,7 +87,8 @@
   export default {
 
     components: {
-      Card
+      Card,
+      Score
     },
 
     data() {
@@ -98,8 +102,7 @@
           // cardRef2: { top: 0, left:80 },
           // cardRef3: { top: 0, left:160 },
           // cardRef4: { top: 0, left:240 },
-        }
-
+        },
       }
     },
 
@@ -119,6 +122,7 @@
 
     mounted() {
       this.setUp()
+      this.setStartingPos()
     },
 
     methods: {
@@ -216,6 +220,12 @@
 
       // main methods
 
+      setStartingPos() {
+        this.cardBuilder(this.getRandomEmpty(), 2)
+        this.cardBuilder(this.getRandomEmpty(), 2)
+        this.cardBuilder(this.getRandomEmpty(), 4)
+      },
+
       // checked
       runSequence(direction) {
         this.calculateTransitionType(direction)
@@ -242,7 +252,7 @@
       },
 
       // checked
-      calculateMovement(direction) {
+      calculateMovement(direction, generateCard) {
 
         let rows = this.getRowsByDirection(direction)
 
@@ -259,6 +269,10 @@
             }
           })
         })
+
+        if (generateCard) {
+          generateCard()
+        }
       },
 
       // checked
@@ -307,7 +321,6 @@
       },
 
       // checked
-      // TODO move cards to store instead of data
       // vue is very data driven, just the act of changing the data triggers the card to move -
       // data flow should always be one way, down from parent to child
       slide(cardRef, top, left) {
@@ -315,7 +328,7 @@
         this.$set(this.cards[cardRef], 'left', left)
       },
 
-      // TODO - rework to fix bug, maybe remove callback function
+      // checked
       calculateMerges(direction, callback) {
 
         let allRows = this.getRowsByDirection(direction)
@@ -359,11 +372,10 @@
           this.mergePositions(merge.firstPosition, merge.secondPosition, merge.value)
         })
 
-        callback(direction)
+        callback(direction, this.generateCard())
       },
 
       // checked
-      // position merges into next position i.e. position disappears
       mergePositions(position, nextPosition, newValue) {
         // deletes first card from data by ref
         this.$delete(this.cards, position.ref)
@@ -374,33 +386,43 @@
         this.setPositionRef({"name": position.name, "ref": null});
       },
 
-      // checked
+      // TODO need to update transitions so we don't need to set it too shrink, all cards entrances should be shrink/grow, only exits need to be dynamic
       generateCard() {
-
-        this.transitionType = "shrink"
 
         let emptyPosition = this.getRandomEmpty()
 
         if(emptyPosition) {
-
-          let cardRef = "cardRef" + this.count
-
-          let cardProps = {
-            top: emptyPosition.top,
-            left: emptyPosition.left,
-            transitionEnabled: true,
-            ref: cardRef,
-            value: 1
-          }
-
-          // update local data
-          this.$set(this.cards, cardRef, cardProps)
-
-          this.setPositionIsEmpty({"name": emptyPosition.name, "bool": false});
-          this.setPositionRef({"name": emptyPosition.name, "ref": cardRef});
-          this.count++
+          this.cardBuilder(emptyPosition, _.sample(this.getCardValues()))
         }
       },
+
+
+      cardBuilder(position, value) {
+        let cardRef = "cardRef" + this.count
+
+        let cardProps = {
+          top: position.top,
+          left: position.left,
+          transitionEnabled: true,
+          ref: cardRef,
+          value: value
+        }
+
+        // update local data
+        this.$set(this.cards, cardRef, cardProps)
+
+        this.setPositionIsEmpty({"name": position.name, "bool": false});
+        this.setPositionRef({"name": position.name, "ref": cardRef});
+        this.count++
+      },
+
+      // uses a set to stop weighted probability of most common values
+      getCardValues() {
+        return Array.from(Object.keys(this.cards).reduce( (values, key) => {
+          values.add(this.cards[key].value)
+          return values
+        }, new Set()))
+      }
 
     }
 
@@ -410,32 +432,16 @@
 
 <style>
 
-  /*:root {*/
-  /*  --shrink-width-start: 72px;*/
-  /*  --shrink-width-end: 0px;*/
-  /*  --shrink-height-start: 72px;*/
-  /*  --shrink-height-end: 0px;*/
-  /*}*/
-
-  /*@media screen and (min-width: 521px) {*/
-  /*  :root {*/
-  /*    --shrink-width-start: 110px;*/
-  /*    --shrink-width-end: 0px;*/
-  /*    --shrink-height-start: 110px;*/
-  /*    --shrink-height-end: 0px;*/
-  /*  }*/
-  /*}*/
-
   /* common for all transitions */
   .shrink-enter-active, .shrink-leave-active,
   .collapse-x-enter-active, .collapse-x-leave-active,
   .collapse-y-enter-active, .collapse-y-leave-active
   {
-    transition: width .3s, height .3s , opacity .3s , transform .3s !important;
+    transition: width .3s, height .3s , transform .3s !important;
   }
 
   /* default appear disappear from centre transition */
-  .shrink-enter, .shrink-leave-to {
+  .shrink-enter, .collapse-x-enter, .collapse-y-enter, .shrink-leave-to {
     transform: scale(0, 0)
   }
 

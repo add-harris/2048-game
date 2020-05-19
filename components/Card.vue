@@ -21,21 +21,34 @@
     },
     data() {
       return {
-        //
+        colors: {
+          "2": '#ADD8E6',
+          "4": '#6495ED',
+          "8": '#5F9EA0',
+          "16": '#FF7F50',
+          "32": '#FF8C00',
+          "64": '#8FBC8F',
+          "128": '#483D8B',
+          "256": '#3CB371',
+          "512": '#32CD32',
+          "1024": '#D2691E',
+          "2048": '#CD5C5C',
+          "4096": '#B22222',
+        }
       }
     },
     computed: {
       computedStyles() {
-        // let transitionEnabled = this.transitionEnabled ? 'top 700ms, left 700ms' : 'none'
         const style = {
           top: (this.initTop * this.viewPortRatio) + 'px',
           left: (this.initLeft * this.viewPortRatio) + 'px',
-          // transition: transitionEnabled
+          "background-color": this.colors[`${this.value}`] || '#8B0000' // return color or default
         }
         if (!this.transitionEnabled) style.transition = 'none'
         return style
       }
     }
+
   }
 
 </script>
@@ -52,7 +65,7 @@
 
   .sliding-card {
     position: absolute;
-    background-color: lightgrey !important;
+    /*background-color: lightgrey !important;*/
     transition: top 500ms, left 500ms;
   }
 

@@ -15,7 +15,15 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', href: "https://fonts.googleapis.com/css2?family=Montserrat&family=Varela+Round&display=swap" }
+      { rel: 'stylesheet', href: "https://fonts.googleapis.com/css2?" +
+          "family=Montserrat&" +
+          "family=Varela+Round&" +
+          "family=Audiowide&" +
+          "family=Orbitron:wght@500&" +
+          "family=Press+Start+2P&" +
+          "family=Russo+One&" +
+          "family=Teko:wght@500" +
+          "&display=swap" }
     ]
   },
   /*
