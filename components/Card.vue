@@ -60,12 +60,11 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-family: 'Varela Round', sans-serif;
+    font-family: 'Orbitron', sans-serif;
   }
 
   .sliding-card {
     position: absolute;
-    /*background-color: lightgrey !important;*/
     transition: top 500ms, left 500ms;
   }
 

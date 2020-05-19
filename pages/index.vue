@@ -8,12 +8,12 @@
 
         <v-card-title class="headline">Slide</v-card-title>
 
-        <Score></Score>
+        <Score :current-score="scores.currentScore" :best-score="scores.bestScore"></Score>
 
         <div class="grey-container grey-container-adjust">
 
 
-              <div class="grid-background grid-background-adjust" ref="card-grid">
+              <div class="grid-background grid-background-adjust" ref="card-grid" v-resize="checkResize">
 
                 <transition-group :name="transitionType">
                   <Card v-for="(card, index) in cards"
@@ -103,6 +103,10 @@
           // cardRef3: { top: 0, left:160 },
           // cardRef4: { top: 0, left:240 },
         },
+        scores: {
+          currentScore: 0,
+          bestScore: 0
+        }
       }
     },
 
@@ -171,7 +175,6 @@
 
       // checked
       addListeners() {
-        window.addEventListener('resize', this.checkResize);
         window.addEventListener('keyup', this.checkKeyPress);
       },
 
@@ -384,9 +387,12 @@
         // removes first card from the store
         this.setPositionIsEmpty({"name": position.name, "bool": true});
         this.setPositionRef({"name": position.name, "ref": null});
+
+        // TODO needs test
+        // increment score
+        this.$set(this.scores, 'currentScore', this.scores.currentScore + newValue)
       },
 
-      // TODO need to update transitions so we don't need to set it too shrink, all cards entrances should be shrink/grow, only exits need to be dynamic
       generateCard() {
 
         let emptyPosition = this.getRandomEmpty()
