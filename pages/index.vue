@@ -8,7 +8,7 @@
 
         <v-card-title class="headline">Slide</v-card-title>
 
-        <Score :current-score="scores.currentScore" :best-score="scores.bestScore"></Score>
+        <Score :current-score="scores.currentScore" :best-score="calcHighScore"></Score>
 
         <div class="grey-container grey-container-adjust">
 
@@ -43,19 +43,14 @@
               <v-row>
                 <div style="margin: 10px">
 
-                  <v-btn color="primary" @click="runSequence('left')">Slide Left</v-btn>
-                  <v-icon>mdi</v-icon>
+                  <v-btn color="primary" @click="restartGame()">
+                    <v-icon>mdi-autorenew</v-icon> Refresh
+                  </v-btn>
+
 
 <!--                  unable to get vue html based event listeners to work so used traditional js-->
 <!--                  <input value="input" type="button" :keyup.space="print()" >-->
 <!--                  <input value="input" type="button" :keyup.enter="print()" >-->
-
-                </div>
-              </v-row>
-              <v-row>
-                <div style="margin: 10px">
-
-                  <v-btn color="primary" @click="generateCard()">create</v-btn>
 
                 </div>
               </v-row>
@@ -108,19 +103,20 @@
       }
     },
 
-    computed: mapState({
-      grid: state => state.grid,
-      // can access whole state with this.grid, though may not be a good idea
+    computed: {
 
-      // to store state across multiple pages
-      // this does work & load cards when they exist in the store, but then breaks further cards being made
-      // is also a hacky way of updating cards data (should use $set)
-      // if used a flag should be set in the store to run it once when returning to the page, reload tiles, then turn it back off
-      // mapCards: async function (state) {
-      //   this.cards = state.grid.storedCards
-      //   await this.$nextTick()
-      // }
-    }),
+      ...mapState({
+                 grid: state => state.grid,
+      }),
+
+      calcHighScore() {
+        if (this.scores.currentScore > this.scores.bestScore) {
+          this.scores.bestScore = this.scores.currentScore
+        }
+        return this.scores.bestScore
+      }
+
+    },
 
     mounted() {
       this.setUp()
@@ -426,6 +422,25 @@
           values.add(this.cards[key].value)
           return values
         }, new Set()))
+      },
+
+      restartGame() {
+
+        this.transitionType = "shrink"
+
+        for (let card in this.cards) {
+          this.$delete(this.cards, card)
+        }
+
+        this.getAll().forEach( position => {
+          this.setPositionIsEmpty({"name": position.name, "bool": true});
+          this.setPositionRef({"name": position.name, "ref": null});
+        })
+
+        this.count = 0
+        this.$set(this.scores, 'currentScore', 0)
+
+        setTimeout(() => this.setStartingPos(), 300)
       }
 
     }

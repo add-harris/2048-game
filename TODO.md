@@ -36,4 +36,8 @@ show tile colors - x
 
 score component - x
 
+keep highscore - x
+
+restart button - x
+
 win/loose scenarios 
