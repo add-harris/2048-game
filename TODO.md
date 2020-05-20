@@ -34,6 +34,6 @@ create random start position - x
 
 show tile colors - x
 
-score component
+score component - x
 
 win/loose scenarios 

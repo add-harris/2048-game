@@ -44,9 +44,7 @@
                 <div style="margin: 10px">
 
                   <v-btn color="primary" @click="runSequence('left')">Slide Left</v-btn>
-                  <v-btn color="primary" @click="runSequence('up')">Slide Up</v-btn>
-                  <v-btn color="primary" @click="runSequence('right')">Slide Right</v-btn>
-                  <v-btn color="primary" @click="runSequence('down')">Slide Down</v-btn>
+                  <v-icon>mdi</v-icon>
 
 <!--                  unable to get vue html based event listeners to work so used traditional js-->
 <!--                  <input value="input" type="button" :keyup.space="print()" >-->

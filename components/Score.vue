@@ -10,11 +10,11 @@
         <v-card light class="score-card"><p class="score-digits">{{currentScore}}</p></v-card>
       </v-col>
 
-<!--      <v-col cols="4" md="2" ><p class="score-label">Best</p></v-col>-->
+      <v-col cols="4" md="2" ><p class="score-label">Best</p></v-col>
 
-<!--      <v-col cols="8" md="4">-->
-<!--        <v-card light class="score-card"><p class="score-digits">{{bestScore}}</p></v-card>-->
-<!--      </v-col>-->
+      <v-col cols="8" md="4">
+        <v-card light class="score-card"><p class="score-digits">{{bestScore}}</p></v-card>
+      </v-col>
 
     </v-row>
 
@@ -41,8 +41,8 @@
   }
 
   .score-card {
-    background-color: lightgrey !important;
-    color: darkblue !important;
+    background-color: dimgray !important;
+    color: whitesmoke !important;
   }
 
   .score-digits {

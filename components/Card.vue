@@ -1,7 +1,7 @@
 <template>
 
-  <v-card class="sliding-card sliding-card-adjust justify-center" v-bind:style="computedStyles" ref="cardRef">
-    <p class="center">{{value}}</p>
+  <v-card class="sliding-card sliding-card-adjust justify-center" :style="computedCardStyles" ref="cardRef">
+    <p :class="computedValueClass">{{value}}</p>
   </v-card>
 
 </template>
@@ -22,31 +22,48 @@
     data() {
       return {
         colors: {
-          "2": '#ADD8E6',
-          "4": '#6495ED',
+          "2": '#6495ED',
+          "4": '#4682B4',
           "8": '#5F9EA0',
-          "16": '#FF7F50',
-          "32": '#FF8C00',
-          "64": '#8FBC8F',
-          "128": '#483D8B',
-          "256": '#3CB371',
-          "512": '#32CD32',
-          "1024": '#D2691E',
-          "2048": '#CD5C5C',
-          "4096": '#B22222',
+          "16": '#8FBC8F',
+          "32": '#3CB371',
+          "64": '#2E8B57',
+          "128": '#FF7F50',
+          "256": '#FF8C00',
+          "512": '#D2691E',
+          "1024": '#CD5C5C',
+          "2048": '#B22222',
+          "4096": '#8B0000',
+        },
+        sizes: {
+          "4": "value-size-lg",
+          "5": "value-size-md",
+          "6": "value-size-sm",
+          "7": "value-size-xs"
         }
       }
     },
     computed: {
-      computedStyles() {
+      computedCardStyles() {
         const style = {
           top: (this.initTop * this.viewPortRatio) + 'px',
           left: (this.initLeft * this.viewPortRatio) + 'px',
-          "background-color": this.colors[`${this.value}`] || '#8B0000' // return color or default
+          "background-color": this.colors[`${this.value}`] || '#483D8B' // return color or default if undefined
         }
         if (!this.transitionEnabled) style.transition = 'none'
         return style
+      },
+
+      computedValueClass() {
+
+        let valueLength = this.value.toString().length
+
+        let sizeClass = valueLength <= 4 ? 'value-size-lg' : this.sizes[valueLength] || 'value-size-xs'
+
+        return `center ${sizeClass}`
+
       }
+
     }
 
   }
@@ -75,9 +92,22 @@
       margin: 5px;
     }
 
-    .center {
+    .value-size-lg {
       font-size: 1.3em
     }
+
+    .value-size-md {
+      font-size: 1.05em
+    }
+
+    .value-size-sm {
+      font-size: 0.85em
+    }
+
+    .value-size-xs {
+      font-size: 0.7em
+    }
+
   }
 
   @media screen and (min-width: 521px) {
@@ -87,9 +117,22 @@
       margin: 5px;
     }
 
-    .center {
-      font-size: 2em
+    .value-size-lg {
+      font-size: 1.9em
     }
+
+    .value-size-md {
+      font-size: 1.55em
+    }
+
+    .value-size-sm {
+      font-size: 1.35em
+    }
+
+    .value-size-xs {
+      font-size: 1.2em
+    }
+
   }
 
 </style>
