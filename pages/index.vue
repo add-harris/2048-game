@@ -34,23 +34,14 @@
 
           <v-card-actions>
 
-          <!-- example nuxt link -->
-          <!-- <v-btn color="primary" nuxt to="/inspire">Continue</v-btn>-->
-
-
 
             <v-container>
               <v-row>
                 <div style="margin: 10px">
 
                   <v-btn color="primary" @click="restartGame()">
-                    <v-icon>mdi-autorenew</v-icon> Refresh
+                    <v-icon>mdi-autorenew</v-icon><span class="restart-label">Restart</span>
                   </v-btn>
-
-
-<!--                  unable to get vue html based event listeners to work so used traditional js-->
-<!--                  <input value="input" type="button" :keyup.space="print()" >-->
-<!--                  <input value="input" type="button" :keyup.enter="print()" >-->
 
                 </div>
               </v-row>
@@ -92,9 +83,6 @@
         cards: {
           // props pattern :
           // cardRef1: { top: 0, left:0, transitionEnabled: true, ref: 'cardRef1', value: 5},
-          // cardRef2: { top: 0, left:80 },
-          // cardRef3: { top: 0, left:160 },
-          // cardRef4: { top: 0, left:240 },
         },
         scores: {
           currentScore: 0,
@@ -517,6 +505,10 @@
       height: 490px;
       width: 490px;
     }
+  }
+
+  .restart-label {
+    padding-left: 5px;
   }
 
 
