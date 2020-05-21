@@ -4,15 +4,43 @@
 
     <v-row>
 
-      <v-col cols="4" md="2" ><p class="score-label">Score</p></v-col>
+<!--      <v-col cols="6">-->
 
-      <v-col cols="8" md="4">
+<!--        <v-card color="grey">-->
+
+<!--          <v-card-title>-->
+<!--            <p class="score-label">Score</p>-->
+<!--          </v-card-title>-->
+
+<!--            <v-card light class="score-card"><p class="score-digits">{{currentScore}}</p></v-card>-->
+
+<!--        </v-card>-->
+
+<!--      </v-col>-->
+
+<!--      <v-col cols="6">-->
+
+<!--        <v-card>-->
+
+<!--          <v-card-title>-->
+<!--            <p class="score-label">Best</p>-->
+<!--          </v-card-title>-->
+
+<!--          <v-card light class="score-card"><p class="score-digits">{{bestScore}}</p></v-card>-->
+
+<!--        </v-card>-->
+
+<!--      </v-col>-->
+
+      <v-col cols="4" ><p class="score-label text-right">Score</p></v-col>
+
+      <v-col cols="8" >
         <v-card light class="score-card"><p class="score-digits">{{currentScore}}</p></v-card>
       </v-col>
 
-      <v-col cols="4" md="2" ><p class="score-label">Best</p></v-col>
+      <v-col cols="4" ><p class="score-label text-right">Best</p></v-col>
 
-      <v-col cols="8" md="4">
+      <v-col cols="8" >
         <v-card light class="score-card"><p class="score-digits">{{bestScore}}</p></v-card>
       </v-col>
 
@@ -37,11 +65,11 @@
 
   .score-label {
     font-size: 1em;
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Russo One', sans-serif;
   }
 
   .score-card {
-    box-shadow: inset 0px 1px 2px 2px #000000;
+    box-shadow: inset 0px 1px 1px 1px #000000;
     background-color: dimgray !important;
     color: whitesmoke !important;
   }

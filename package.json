@@ -1,5 +1,5 @@
 {
-  "name": "VueGames.Boss",
+  "name": "2048-Game",
   "version": "1.0.0",
   "description": "2048 game built using Vue.js & Nuxt",
   "author": "adam.harrison",

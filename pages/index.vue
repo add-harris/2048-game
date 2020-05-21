@@ -32,26 +32,26 @@
 
         </div>
 
-          <v-card-actions>
+        <v-card-actions>
 
 
-            <v-container>
-              <v-row>
-                <div style="margin: 10px">
+          <v-container>
+            <v-row>
+              <div style="margin: 10px">
 
-                  <v-btn color="#4682B4" outlined @click="restartGame()">
-                    <v-icon>mdi-autorenew</v-icon><span class="restart-label">Restart</span>
-                  </v-btn>
+                <v-btn color="#4682B4" outlined @click="restartGame()">
+                  <v-icon>mdi-autorenew</v-icon><span class="restart-label">Restart</span>
+                </v-btn>
 
-                  <v-btn color="primary" icon @click="restartGame()">
-                    <v-icon>mdi-autorenew</v-icon>
-                  </v-btn>
+                <v-btn color="primary" icon @click="restartGame()">
+                  <v-icon>mdi-autorenew</v-icon>
+                </v-btn>
 
-                </div>
-              </v-row>
-            </v-container>
+              </div>
+            </v-row>
+          </v-container>
 
-          </v-card-actions>
+        </v-card-actions>
 
 
       </v-card>
