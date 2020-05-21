@@ -6,7 +6,7 @@
 
       <v-card>
 
-        <v-card-title class="headline">Slide</v-card-title>
+        <v-card-title class="headline" id="game-title">2048 GAME</v-card-title>
 
         <Score :current-score="scores.currentScore" :best-score="calcHighScore"></Score>
 
@@ -39,8 +39,12 @@
               <v-row>
                 <div style="margin: 10px">
 
-                  <v-btn color="primary" @click="restartGame()">
+                  <v-btn color="#4682B4" outlined @click="restartGame()">
                     <v-icon>mdi-autorenew</v-icon><span class="restart-label">Restart</span>
+                  </v-btn>
+
+                  <v-btn color="primary" icon @click="restartGame()">
+                    <v-icon>mdi-autorenew</v-icon>
                   </v-btn>
 
                 </div>
@@ -508,7 +512,12 @@
   }
 
   .restart-label {
+    font-family: 'Russo One', sans-serif;
     padding-left: 5px;
+  }
+
+  #game-title {
+    font-family: 'Russo One', sans-serif !important;
   }
 
 

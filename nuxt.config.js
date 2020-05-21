@@ -14,6 +14,7 @@ export default {
       { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
     ],
     link: [
+      // TODO remove unused fonts
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       { rel: 'stylesheet', href: "https://fonts.googleapis.com/css2?" +
           "family=Montserrat&" +
@@ -22,8 +23,9 @@ export default {
           "family=Orbitron:wght@500&" +
           "family=Press+Start+2P&" +
           "family=Russo+One&" +
-          "family=Teko:wght@500" +
-          "&display=swap" }
+          "family=Teko:wght@500&" +
+          "family=Bungee+Shade&" +
+          "display=swap" }
     ]
   },
   /*

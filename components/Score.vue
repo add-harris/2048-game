@@ -41,11 +41,13 @@
   }
 
   .score-card {
+    box-shadow: inset 0px 1px 2px 2px #000000;
     background-color: dimgray !important;
     color: whitesmoke !important;
   }
 
   .score-digits {
+    padding-right: 5px;
     text-align: right;
     font-size: 1.5em;
     font-family: 'Orbitron', sans-serif;

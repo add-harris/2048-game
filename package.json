@@ -1,7 +1,7 @@
 {
-  "name": "2048-game",
+  "name": "VueGames.Boss",
   "version": "1.0.0",
-  "description": "My badass Nuxt.js project",
+  "description": "2048 game built using Vue.js & Nuxt",
   "author": "adam.harrison",
   "private": true,
   "scripts": {
