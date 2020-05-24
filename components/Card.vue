@@ -85,6 +85,7 @@
   .sliding-card {
     position: absolute;
     transition: top 300ms, left 300ms;
+    z-index: 2;
   }
 
   @media screen and (max-width: 520px) {

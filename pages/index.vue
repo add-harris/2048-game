@@ -435,34 +435,30 @@
   .collapse-x-enter-active, .collapse-y-enter-active
   {
     transition: width .3s, height .3s , transform .3s !important;
-    z-index: 1;
+    z-index: 2 !important;
   }
 
   .collapse-y-leave-active, .collapse-x-leave-active
   {
     transition: width .3s, height .3s , transform .3s !important;
-    z-index: 0;
+    z-index: 1 !important;
   }
 
   /* default appear disappear from centre transition */
   .shrink-enter, .collapse-x-enter, .collapse-y-enter, .shrink-leave-to
   {
     transform: scale(0, 0);
-    z-index: 1;
+    z-index: 2 !important;
   }
 
-  /* can do collapse up & left, but not right & down yet, so using these generic folds for now */
-  /* may need to use javascript hooks to do right & down ( or could use padding right & padding top ?) */
   .collapse-y-leave-to {
-    /* to collapse up use height: 0 */
     transform: scaleY(0);
-    z-index: 0;
+    z-index: 1 !important;
   }
 
   .collapse-x-leave-to {
-    /* to collapse left use width: 0 */
     transform: scaleX(0);
-    z-index: 0;
+    z-index: 1 !important;
   }
 
 
@@ -478,8 +474,8 @@
     background-repeat: repeat;
     background-color: whitesmoke;
     background-image:
-      linear-gradient(to right, grey 1px, transparent 1px),
-      linear-gradient(to bottom, grey 1px, transparent 1px);
+      linear-gradient(to right, dimgray 1px, transparent 1px),
+      linear-gradient(to bottom, dimgray 1px, transparent 1px);
   }
 
   @media screen and (max-width: 520px) {
