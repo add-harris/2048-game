@@ -1,14 +1,14 @@
 <template>
 
-  <v-app light>
+  <v-app dark>
 
 
 <!--    <v-app-bar :fixed="fixed" app src="https://media.giphy.com/media/fe3zisUnJjbqM/giphy.gif">-->
-    <v-app-bar  app :src="getImgSrc()" shrink-on-scroll>
+<!--    <v-app-bar  app :src="getImgSrc()" shrink-on-scroll>-->
 
-      <v-toolbar-title :style="getStylesObject()" light v-text="title" />
+<!--      <v-toolbar-title :style="getStylesObject()" light v-text="title" />-->
 
-    </v-app-bar>
+<!--    </v-app-bar>-->
 
     <v-content>
       <v-container fluid>
@@ -24,6 +24,8 @@
 </template>
 
 <script>
+
+  // TODO can extract a lot of this to navbar component
 
   import _ from 'lodash'
 

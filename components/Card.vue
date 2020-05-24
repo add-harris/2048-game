@@ -1,6 +1,6 @@
 <template>
 
-  <v-card class="sliding-card sliding-card-adjust justify-center" :style="computedCardStyles" ref="cardRef">
+  <v-card raised class="sliding-card sliding-card-adjust justify-center" :style="computedCardStyles" :ref="cardRef">
     <p :class="computedValueClass">{{value}}</p>
   </v-card>
 
@@ -16,6 +16,7 @@
       initLeft: Number,
       viewPortRatio: Number,
       transitionEnabled: Boolean,
+      zIndex: Number,
       cardRef: String,
       value: Number
     },
@@ -48,6 +49,7 @@
         const style = {
           top: (this.initTop * this.viewPortRatio) + 'px',
           left: (this.initLeft * this.viewPortRatio) + 'px',
+          // zIndex: this.zIndex,
           "background-color": this.colors[`${this.value}`] || '#483D8B' // return color or default if undefined
         }
         if (!this.transitionEnabled) style.transition = 'none'
@@ -82,7 +84,7 @@
 
   .sliding-card {
     position: absolute;
-    transition: top 500ms, left 500ms;
+    transition: top 300ms, left 300ms;
   }
 
   @media screen and (max-width: 520px) {

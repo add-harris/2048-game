@@ -12,7 +12,6 @@
 
         <div class="grey-container grey-container-adjust">
 
-
               <div class="grid-background grid-background-adjust" ref="card-grid" v-resize="checkResize">
 
                 <transition-group :name="transitionType">
@@ -23,33 +22,18 @@
                         :init-left="card.left"
                         :view-port-ratio="viewPortRatio"
                         :transition-enabled="card.transitionEnabled"
+                        :z-index="card.zIndex"
                         :value="card.value"
                   ></Card>
                 </transition-group>
 
               </div>
 
-
         </div>
 
         <v-card-actions>
 
-
-          <v-container>
-            <v-row>
-              <div style="margin: 10px">
-
-                <v-btn color="#4682B4" outlined @click="restartGame()">
-                  <v-icon>mdi-autorenew</v-icon><span class="restart-label">Restart</span>
-                </v-btn>
-
-                <v-btn color="primary" icon @click="restartGame()">
-                  <v-icon>mdi-autorenew</v-icon>
-                </v-btn>
-
-              </div>
-            </v-row>
-          </v-container>
+          <IconBtnBar v-on:restart="restartGame()"></IconBtnBar>
 
         </v-card-actions>
 
@@ -68,6 +52,7 @@
   import { Position } from '../utils/Position'
   import Card from '../components/Card'
   import Score from '../components/Score'
+  import IconBtnBar from '../components/IconBtnBar'
   import { mapState, mapGetters, mapMutations} from 'vuex'
   import _ from 'lodash'
 
@@ -76,7 +61,8 @@
 
     components: {
       Card,
-      Score
+      Score,
+      IconBtnBar
     },
 
     data() {
@@ -91,7 +77,7 @@
         scores: {
           currentScore: 0,
           bestScore: 0
-        }
+        },
       }
     },
 
@@ -219,7 +205,7 @@
       runSequence(direction) {
         this.calculateTransitionType(direction)
         this.calculateMovement(direction)
-        setTimeout(() => this.calculateMerges(direction, this.calculateMovement), 400)
+        setTimeout(() => this.calculateMerges(direction, this.calculateMovement), 300)
       },
 
       // checked
@@ -396,6 +382,7 @@
           top: position.top,
           left: position.left,
           transitionEnabled: true,
+          zIndex: 1,
           ref: cardRef,
           value: value
         }
@@ -445,27 +432,37 @@
 
   /* common for all transitions */
   .shrink-enter-active, .shrink-leave-active,
-  .collapse-x-enter-active, .collapse-x-leave-active,
-  .collapse-y-enter-active, .collapse-y-leave-active
+  .collapse-x-enter-active, .collapse-y-enter-active
   {
     transition: width .3s, height .3s , transform .3s !important;
+    z-index: 1;
+  }
+
+  .collapse-y-leave-active, .collapse-x-leave-active
+  {
+    transition: width .3s, height .3s , transform .3s !important;
+    z-index: 0;
   }
 
   /* default appear disappear from centre transition */
-  .shrink-enter, .collapse-x-enter, .collapse-y-enter, .shrink-leave-to {
-    transform: scale(0, 0)
+  .shrink-enter, .collapse-x-enter, .collapse-y-enter, .shrink-leave-to
+  {
+    transform: scale(0, 0);
+    z-index: 1;
   }
 
   /* can do collapse up & left, but not right & down yet, so using these generic folds for now */
   /* may need to use javascript hooks to do right & down ( or could use padding right & padding top ?) */
   .collapse-y-leave-to {
     /* to collapse up use height: 0 */
-    transform: scaleY(0)
+    transform: scaleY(0);
+    z-index: 0;
   }
 
   .collapse-x-leave-to {
     /* to collapse left use width: 0 */
-    transform: scaleX(0)
+    transform: scaleX(0);
+    z-index: 0;
   }
 
 
@@ -509,11 +506,6 @@
       height: 490px;
       width: 490px;
     }
-  }
-
-  .restart-label {
-    font-family: 'Russo One', sans-serif;
-    padding-left: 5px;
   }
 
   #game-title {

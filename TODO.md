@@ -40,4 +40,14 @@ keep highscore - x
 
 restart button - x
 
+button & button bar component - x
+
+restart triggered by event - x
+
+adjust animation timings ?
+
+z-index card on transition out ?
+
 win/loose scenarios 
+
+host on github pages 
