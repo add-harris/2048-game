@@ -8,11 +8,7 @@
 
       <v-spacer></v-spacer>
 
-      <IconBtn :icon-name="btns.github.name" :tooltip="btns.github.tooltip" ></IconBtn>
-
-      <v-badge color="green" :content="likes" >
-        <IconBtn :icon-name="btns.like.name" :tooltip="btns.like.tooltip" :event="btns.like.event" v-on:like="upLike"></IconBtn>
-      </v-badge>
+      <IconBtn :icon-name="btns.github.name" :tooltip="btns.github.tooltip" :link="btns.github.link" ></IconBtn>
 
     </v-row>
 
@@ -39,12 +35,8 @@
           },
           github: {
             name: "mdi-github",
-            tooltip: "source code"
-          },
-          like: {
-            name: "mdi-thumb-up",
-            tooltip: "like",
-            event: "like"
+            tooltip: "github",
+            link: "https://github.com/add-harris/2048-game"
           },
         }
       }
@@ -59,9 +51,6 @@
         this.$emit(value)
       },
 
-      upLike() {
-        this.likes++
-      }
     }
   }
 

@@ -84,7 +84,7 @@
 
   .sliding-card {
     position: absolute;
-    transition: top 300ms, left 300ms;
+    transition: top 400ms, left 400ms;
     z-index: 2;
   }
 

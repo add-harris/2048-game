@@ -2,7 +2,7 @@
 
   <v-tooltip top>
     <template v-slot:activator="{ on }">
-      <v-btn color="primary" icon large outlined v-on="on" @click="emitEvent()">
+      <v-btn color="whitesmoke" icon large outlined v-on="on" @click="emitEvent()" :href="link">
         <v-icon>{{iconName}}</v-icon>
       </v-btn>
     </template>
@@ -20,7 +20,8 @@
       event: {
         type: String,
         default: null
-      }
+      },
+      link: String
     },
     methods: {
       emitEvent() {

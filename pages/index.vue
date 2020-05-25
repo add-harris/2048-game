@@ -165,7 +165,7 @@
         this.setCardTransitions(false)
         this.viewPortRatio = ratio
         // creates a small delay to allow element resizing to complete before restoring css transitions
-        setTimeout(() => this.setCardTransitions(true), 300)
+        setTimeout(() => this.setCardTransitions(true), 400)
       },
 
       // checked
@@ -205,7 +205,7 @@
       runSequence(direction) {
         this.calculateTransitionType(direction)
         this.calculateMovement(direction)
-        setTimeout(() => this.calculateMerges(direction, this.calculateMovement), 300)
+        setTimeout(() => this.calculateMerges(direction, this.calculateMovement), 400)
       },
 
       // checked
@@ -246,7 +246,7 @@
         })
 
         if (generateCard) {
-          generateCard()
+          setTimeout(() => generateCard(), 100)
         }
       },
 
@@ -434,13 +434,13 @@
   .shrink-enter-active, .shrink-leave-active,
   .collapse-x-enter-active, .collapse-y-enter-active
   {
-    transition: width .3s, height .3s , transform .3s !important;
+    transition: width .4s, height .4s , transform .4s !important;
     z-index: 2 !important;
   }
 
   .collapse-y-leave-active, .collapse-x-leave-active
   {
-    transition: width .3s, height .3s , transform .3s !important;
+    transition: width .4s, height .4s , transform .4s !important;
     z-index: 1 !important;
   }
 
@@ -452,12 +452,14 @@
   }
 
   .collapse-y-leave-to {
-    transform: scaleY(0);
+    transform: scale(0, 0);
+    /*transform: scaleY(0);*/
     z-index: 1 !important;
   }
 
   .collapse-x-leave-to {
-    transform: scaleX(0);
+    transform: scale(0, 0);
+    /*transform: scaleX(0);*/
     z-index: 1 !important;
   }
 
