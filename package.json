@@ -6,9 +6,11 @@
   "private": true,
   "scripts": {
     "dev": "nuxt",
-    "build": "nuxt build",
     "start": "nuxt start",
+    "build": "nuxt build",
     "generate": "nuxt generate",
+    "build:ghp": "DEPLOY_ENV=GH_PAGES nuxt build",
+    "generate:ghp": "DEPLOY_ENV=GH_PAGES nuxt generate",
     "test": "jest"
   },
   "dependencies": {
