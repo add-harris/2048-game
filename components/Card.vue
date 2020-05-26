@@ -83,8 +83,9 @@
   }
 
   .sliding-card {
-    position: absolute;
-    transition: top 400ms, left 400ms;
+    position: absolute !important;
+    transition-property: all !important;
+    transition: top .4s, left .4s !important;
     z-index: 2;
   }
 
