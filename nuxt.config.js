@@ -1,7 +1,14 @@
 import colors from 'vuetify/es5/util/colors'
 
+const routerBase = process.env.DEPLOY_ENV === 'GH_PAGES' ? {
+  router: {
+    base: '/2048-game/'
+  }
+} : {}
+
 export default {
-  mode: 'universal',
+  ...routerBase,
+  mode: 'spa',
   /*
   ** Headers of the page
   */
@@ -17,14 +24,8 @@ export default {
       // TODO remove unused fonts
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       { rel: 'stylesheet', href: "https://fonts.googleapis.com/css2?" +
-          "family=Montserrat&" +
-          "family=Varela+Round&" +
-          "family=Audiowide&" +
           "family=Orbitron:wght@500&" +
-          "family=Press+Start+2P&" +
           "family=Russo+One&" +
-          "family=Teko:wght@500&" +
-          "family=Bungee+Shade&" +
           "display=swap" }
     ]
   },
