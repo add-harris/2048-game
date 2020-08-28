@@ -28,9 +28,8 @@ site will be served on localhost:3000
 
 # to build as static site for git hub pages
 $ npm run generate:ghp
-$ git checkout gh-pages
-$ git pull origin master
-$ git push
+$ npm run deploy:ghp
+
 ```
 
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
