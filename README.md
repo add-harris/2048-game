@@ -20,9 +20,17 @@ $ npm run dev
 # run tests
 $ npm test
 
-# build for production and launch server
-$ npm run build
+# to run as staic site locally
+$ npm run generate
 $ npm run start
+
+site will be served on localhost:3000
+
+# to build as static site for git hub pages
+$ npm run generate:ghp
+$ git checkout gh-pages
+$ git pull origin master
+$ git push
 ```
 
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).

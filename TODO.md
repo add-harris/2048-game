@@ -44,10 +44,12 @@ button & button bar component - x
 
 restart triggered by event - x
 
-adjust animation timings ?
+win/loose scenarios - x
 
-z-index card on transition out ?
+host on github pages - x
 
-win/loose scenarios 
+###BACKLOG
 
-host on github pages 
+tighten up animations
+
+

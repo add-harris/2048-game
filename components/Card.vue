@@ -52,7 +52,7 @@
           // zIndex: this.zIndex,
           "background-color": this.colors[`${this.value}`] || '#483D8B' // return color or default if undefined
         }
-        if (!this.transitionEnabled) style.transition = 'none'
+        if (!this.transitionEnabled) style.transition = 'none !important'
         return style
       },
 
