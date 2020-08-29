@@ -201,14 +201,12 @@
         this.cardBuilder(this.getRandomEmpty(), 4)
       },
 
-      // checked
       runSequence(direction) {
         this.calculateTransitionType(direction)
         this.calculateMovement(direction)
         setTimeout(() => this.calculateMerges(direction, this.calculateMovement), 400)
       },
 
-      // checked
       calculateTransitionType(direction) {
         switch (direction) {
           case "left":
@@ -226,7 +224,6 @@
         }
       },
 
-      // checked
       calculateMovement(direction, generateCard) {
 
         let rows = this.getRowsByDirection(direction)
@@ -250,7 +247,6 @@
         }
       },
 
-      // checked
       // the logic is to pull tiles in the selected direction
       // rows must be returned in the correct order depending on the direction
       // i.e if direction is 'left' row1 should be as: pos1, 2, 3, 4 - pulling from left to right
@@ -268,7 +264,6 @@
         }
       },
 
-      // checked
       canMove(position, row, direction) {
 
         if (position.edge.includes(direction)) {
@@ -277,10 +272,8 @@
         let nextPosition = row[ row.indexOf(position) - 1 ]
 
         return nextPosition.isEmpty
-
       },
 
-      // checked
       shuffleUp(position, row) {
 
         let firstEmpty = this.getEmpty(row)[0]
@@ -292,10 +285,8 @@
         this.setPositionIsEmpty({"name": firstEmpty.name, "bool": false});
         this.setPositionRef({"name": position.name, "ref": null});
         this.setPositionRef({"name": firstEmpty.name, "ref": cardRef});
-
       },
 
-      // checked
       // vue is very data driven, just the act of changing the data triggers the card to move -
       // data flow should always be one way, down from parent to child
       slide(cardRef, top, left) {
@@ -303,7 +294,6 @@
         this.$set(this.cards[cardRef], 'left', left)
       },
 
-      // checked
       calculateMerges(direction, callback) {
 
         let allRows = this.getRowsByDirection(direction)
@@ -350,7 +340,6 @@
         callback(direction, this.generateCard())
       },
 
-      // checked
       mergePositions(position, nextPosition, newValue) {
         // deletes first card from data by ref
         this.$delete(this.cards, position.ref)

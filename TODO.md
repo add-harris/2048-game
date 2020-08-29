@@ -50,6 +50,6 @@ host on github pages - x
 
 ###BACKLOG
 
-tighten up animations
-
-
+- tighten up animations
+- fix tests
+- increase coverage
