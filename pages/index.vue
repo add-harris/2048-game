@@ -10,7 +10,13 @@
 
         <Score :current-score="scores.currentScore" :best-score="calcHighScore"></Score>
 
-        <div class="grey-container grey-container-adjust">
+          <v-touch
+            class="grey-container grey-container-adjust"
+            v-on:swipeleft="runSequence('left')"
+            v-on:swiperight="runSequence('right')"
+            v-on:swipeup="runSequence('up')"
+            v-on:swipedown="runSequence('down')"
+          >
 
               <div class="grid-background grid-background-adjust" ref="card-grid" v-resize="checkResize">
 
@@ -29,14 +35,13 @@
 
               </div>
 
-        </div>
+        </v-touch>
 
         <v-card-actions>
 
           <IconBtnBar v-on:restart="restartGame()"></IconBtnBar>
 
         </v-card-actions>
-
 
       </v-card>
 
@@ -77,7 +82,7 @@
         scores: {
           currentScore: 0,
           bestScore: 0
-        },
+        }
       }
     },
 
